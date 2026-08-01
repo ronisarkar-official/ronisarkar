@@ -6,7 +6,8 @@ import certification from './certification'
 import post from './post'
 import settings from './settings'
 import visitorCount from './visitorCount'
+import youtube from './youtube'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [post, author, category, certification, settings, visitorCount],
+  types: [post, author, category, certification, settings, visitorCount, youtube],
 }

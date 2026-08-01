@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -391,7 +392,7 @@ export default function CommandMenu() {
 												onSelect={() =>
 													runCommand(() =>
 														copyToClipboard(
-															'ronisarkarofficial@gmail.com',
+															'ronisarkar10938@gmail.com',
 															'Email',
 														),
 													)
@@ -406,7 +407,7 @@ export default function CommandMenu() {
 												onSelect={() =>
 													runCommand(() =>
 														copyToClipboard(
-															'https://ronisarkar.spechype.com',
+															'https://roni-sarkar.vercel.app',
 															'Website URL',
 														),
 													)
@@ -420,8 +421,7 @@ export default function CommandMenu() {
 												keywords={['download', 'resume', 'cv', 'pdf']}
 												onSelect={() =>
 													runCommand(() => {
-														// Add your resume download link here
-														window.open('/resume.pdf', '_blank');
+														window.open('https://drive.google.com/file/d/1LUALqh7wvyjfcw2xyT4ofS5aQALpxD6l/view', '_blank');
 													})
 												}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">

@@ -64,7 +64,7 @@ export function ProjectCard({ project }: Props) {
 				)}
 				{links && links.length > 0 && (
 					<div className="flex flex-row flex-wrap items-start gap-1">
-						{links.toSorted().map((link, idx) => (
+						{links.toSorted((a, b) => (a.name || '').localeCompare(b.name || '')).map((link, idx) => (
 							<Link
 								href={link?.href}
 								key={idx}

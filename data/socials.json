@@ -11,6 +11,11 @@
 			"icon": "github"
 		},
 		{
+			"name": "YouTube",
+			"href": "https://www.youtube.com/@skillglitch",
+			"icon": "youtube"
+		},
+		{
 			"name": "WhatsApp",
 			"href": "https://wa.me/918972134437",
 			"icon": "whatsapp"

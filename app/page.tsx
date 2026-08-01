@@ -224,7 +224,7 @@ export default async function Home() {
 					))}
 				</div>
 			</section>
-			<BelowFoldWidgets />			
+			<BelowFoldWidgets />
 		</article>
 	);
 }

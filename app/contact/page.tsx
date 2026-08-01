@@ -1,15 +1,13 @@
 'use client';
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import emailjs from '@emailjs/browser';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'sonner';
 import { Send } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/ui/Button';
 import SpringAnimated from '@/components/SpringAnimated';
-import { Toaster } from 'react-hot-toast';
 
 type FormState = {
 	firstName: string;
@@ -19,9 +17,16 @@ type FormState = {
 	honey: string;
 };
 
+type FormErrors = {
+	firstName?: boolean;
+	email?: boolean;
+	message?: boolean;
+};
+
 export default function Contact() {
 	const formRef = useRef<HTMLFormElement | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [errors, setErrors] = useState<FormErrors>({});
 	const [form, setForm] = useState<FormState>({
 		firstName: '',
 		lastName: '',
@@ -30,31 +35,44 @@ export default function Contact() {
 		honey: '',
 	});
 
-	const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-	const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-	const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-	const TO_EMAIL = process.env.NEXT_PUBLIC_CONTACT_TO_EMAIL;
-	const TO_NAME = process.env.NEXT_PUBLIC_CONTACT_TO_NAME || 'Recipient';
-
 	function handleChange(
 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) {
 		const { name, value } = e.target;
 		const key = name as keyof FormState;
 		setForm((p) => ({ ...p, [key]: value }));
+		if (errors[key as keyof FormErrors]) {
+			setErrors((p) => ({ ...p, [key]: false }));
+		}
 	}
 
 	function validate() {
-		if (form.honey) return { ok: false, message: 'Spam detected' };
-		if (!form.firstName.trim() || !form.email.trim() || !form.message.trim())
+		const newErrors: FormErrors = {};
+		if (form.honey) return { ok: false, message: 'Spam detected', errors: {} };
+
+		if (!form.firstName.trim()) newErrors.firstName = true;
+		if (!form.email.trim()) newErrors.email = true;
+		if (!form.message.trim()) newErrors.message = true;
+
+		const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (form.email.trim() && !emailRe.test(form.email.trim())) {
+			newErrors.email = true;
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			if (newErrors.email && form.email.trim() && !emailRe.test(form.email.trim())) {
+				return { ok: false, message: 'Please enter a valid email address.', errors: newErrors };
+			}
 			return {
 				ok: false,
-				message: 'Please fill required fields: First name, Email and Message.',
+				message: 'Please fill in all required fields.',
+				errors: newErrors,
 			};
-		const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRe.test(form.email))
-			return { ok: false, message: 'Please enter a valid email address.' };
-		return { ok: true };
+		}
+
+		setErrors({});
+		return { ok: true, errors: {} };
 	}
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -66,20 +84,19 @@ export default function Contact() {
 		const toastId = toast.loading('Sending message...');
 
 		try {
-			await emailjs.send(
-				SERVICE_ID ?? '',
-				TEMPLATE_ID ?? '',
-				{
-					first_name: form.firstName,
-					last_name: form.lastName,
-					from_email: form.email,
-					to_name: TO_NAME,
-					to_email: TO_EMAIL,
-					message: form.message,
-					reply_to: form.email,
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
 				},
-				PUBLIC_KEY ?? '',
-			);
+				body: JSON.stringify(form),
+			});
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw new Error(data.error || 'Failed to send message.');
+			}
 
 			setLoading(false);
 			toast.success('Message sent — thank you!', { id: toastId });
@@ -90,11 +107,14 @@ export default function Contact() {
 				message: '',
 				honey: '',
 			});
+			setErrors({});
 			formRef.current?.reset();
-		} catch (err) {
+		} catch (err: any) {
 			console.error('Email send error:', err);
 			setLoading(false);
-			toast.error('Something went wrong. Try again later.', { id: toastId });
+			toast.error(err?.message || 'Something went wrong. Try again later.', {
+				id: toastId,
+			});
 		}
 	}
 
@@ -114,24 +134,25 @@ export default function Contact() {
 					ref={formRef}
 					onSubmit={handleSubmit}
 					className="space-y-6"
-					aria-label="Contact form">
+					aria-label="Contact form"
+					noValidate>
 					<div aria-hidden="true" className="sr-only">
-					<label>
-						Don&apos;t fill this out if you are human
-						<input
-							type="text"
-							name="honey"
-							value={form.honey}
-							onChange={handleChange}
-							autoComplete="off"
-							tabIndex={-1}
-						/>
-					</label>
-				</div>
+						<label>
+							Don&apos;t fill this out if you are human
+							<input
+								type="text"
+								name="honey"
+								value={form.honey}
+								onChange={handleChange}
+								autoComplete="off"
+								tabIndex={-1}
+							/>
+						</label>
+					</div>
 
 					<div className="flex flex-col gap-6 sm:flex-row">
 						<div className="flex-1 space-y-2 stagger-item">
-							<Label htmlFor="firstName">First name</Label>
+							<Label htmlFor="firstName">First name *</Label>
 							<Input
 								id="firstName"
 								name="firstName"
@@ -139,6 +160,8 @@ export default function Contact() {
 								value={form.firstName}
 								onChange={handleChange}
 								required
+								aria-invalid={errors.firstName}
+								className={errors.firstName ? 'border-destructive focus-visible:ring-destructive' : ''}
 								placeholder="John"
 							/>
 						</div>
@@ -156,7 +179,7 @@ export default function Contact() {
 					</div>
 
 					<div className="space-y-2 stagger-item">
-						<Label htmlFor="email">Email</Label>
+						<Label htmlFor="email">Email *</Label>
 						<Input
 							id="email"
 							name="email"
@@ -164,20 +187,23 @@ export default function Contact() {
 							value={form.email}
 							onChange={handleChange}
 							required
+							aria-invalid={errors.email}
+							className={errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}
 							placeholder="john@example.com"
 						/>
 					</div>
 
 					<div className="space-y-2 stagger-item">
-						<Label htmlFor="message">Message</Label>
+						<Label htmlFor="message">Message *</Label>
 						<Textarea
 							id="message"
 							name="message"
 							value={form.message}
 							onChange={handleChange}
 							required
+							aria-invalid={errors.message}
+							className={`min-h-[160px] resize-y ${errors.message ? 'border-destructive focus-visible:ring-destructive' : ''}`}
 							placeholder="What's on your mind?"
-							className="min-h-[160px] resize-y"
 						/>
 					</div>
 

@@ -1,10 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PortableText, PortableTextBlock } from '@portabletext/react';
 import { urlFor } from '@/sanity/lib/image';
+import { getYouTubeId } from '@/lib/youtube';
 
 // Custom components for Portable Text rendering
 const portableTextComponents = {
 	types: {
+		youtube: ({ value }: any) => {
+			const videoId = getYouTubeId(value?.url);
+			if (!videoId) return null;
+
+			return (
+				<div className="my-8 overflow-hidden rounded-lg border border-border bg-card">
+					<iframe
+						src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+						title={value?.title || 'YouTube video'}
+						className="aspect-video w-full"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						allowFullScreen
+						loading="lazy"
+					/>
+					{value?.title && (
+						<p className="border-t border-border px-4 py-2 text-center text-sm text-muted-foreground">
+							{value.title}
+						</p>
+					)}
+				</div>
+			);
+		},
 		image: ({ value }: any) => {
 			if (!value?.asset) return null;
 

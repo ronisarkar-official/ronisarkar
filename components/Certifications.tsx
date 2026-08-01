@@ -1,8 +1,8 @@
 'use client';
 
 import PortableTextContent from '@/components/PortableTextContent';
-import { format } from 'date-fns';
-import { Crown, Paperclip, ChevronDown, ExternalLink, LinkIcon } from 'lucide-react';
+import dayjs from 'dayjs';
+import { Crown, Paperclip, ChevronDown } from 'lucide-react';
 import { Separator } from '@/components/ui/Separator';
 import {
 	Tooltip,
@@ -47,7 +47,7 @@ function AwardRightIcons({ award }: { award: Award }) {
 							rel="noopener noreferrer"
 							aria-label="Open reference link"
 							onClick={(e) => e.stopPropagation()}>
-							<LinkIcon  className="size-3.5" />
+							<Paperclip className="size-3.5" />
 						</a>
 					</TooltipTrigger>
 					<TooltipContent>
@@ -62,9 +62,7 @@ function AwardRightIcons({ award }: { award: Award }) {
 function AwardMeta({ award }: { award: Award }) {
 	return (
 		<div className="flex-1 text-left">
-			<h3 className="text-sm font-semibold leading-snug">
-				{award.title}
-			</h3>
+			<h3 className="text-sm font-semibold leading-snug">{award.title}</h3>
 			<dl className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-muted-foreground">
 				<dt className="sr-only">Prize</dt>
 				<dd>{award.prize}</dd>
@@ -76,7 +74,7 @@ function AwardMeta({ award }: { award: Award }) {
 				<dt className="sr-only">Date</dt>
 				<dd>
 					<time dateTime={new Date(award.date).toISOString()}>
-						{format(new Date(award.date), 'MM.yyyy')}
+						{dayjs(award.date).format('MM.YYYY')}
 					</time>
 				</dd>
 				<Separator
@@ -93,8 +91,12 @@ function AwardMeta({ award }: { award: Award }) {
 
 function AwardItemExpandable({ award }: { award: Award }) {
 	return (
-		<Accordion type="single" collapsible>
-			<AccordionItem value={award._id} className="border-0">
+		<Accordion
+			type="single"
+			collapsible>
+			<AccordionItem
+				value={award._id}
+				className="border-0">
 				<div className="flex items-center">
 					{/* Dynamic icon */}
 					<div className="mx-4 flex size-7 shrink-0 items-center justify-center rounded-lg border border-muted-foreground/15 bg-muted/50">
@@ -118,9 +120,9 @@ function AwardItemExpandable({ award }: { award: Award }) {
 				<AccordionContent>
 					<div className="ml-[60px] border-l border-dashed border-muted-foreground/20 px-4 pb-2">
 						<div className="border-t border-muted-foreground/10 pt-3">
-							<PortableTextContent 
-								content={award.description} 
-								className="!prose-sm text-muted-foreground [&_p]:leading-relaxed [&_p:last-child]:mb-0 [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:text-primary/80" 
+							<PortableTextContent
+								content={award.description}
+								className="!prose-sm text-muted-foreground [&_p]:leading-relaxed [&_p:last-child]:mb-0 [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:text-primary/80"
 							/>
 						</div>
 					</div>
@@ -155,7 +157,9 @@ export default function Achievements({ awards }: Props) {
 	}
 
 	return (
-		<section className="flex w-full flex-col gap-6" id="achievements">
+		<section
+			className="flex w-full flex-col gap-6"
+			id="achievements">
 			<header>
 				<h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
 					Achievements
@@ -167,11 +171,15 @@ export default function Achievements({ awards }: Props) {
 
 			<div className="divide-y divide-border rounded-xl border bg-card overflow-hidden">
 				{awards.map((award) =>
-					award.description && award.description.length > 0 ? (
-						<AwardItemExpandable key={award._id} award={award} />
-					) : (
-						<AwardItemStatic key={award._id} award={award} />
-					)
+					award.description && award.description.length > 0 ?
+						<AwardItemExpandable
+							key={award._id}
+							award={award}
+						/>
+					:	<AwardItemStatic
+							key={award._id}
+							award={award}
+						/>,
 				)}
 			</div>
 		</section>

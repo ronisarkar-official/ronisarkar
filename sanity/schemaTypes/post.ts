@@ -160,6 +160,10 @@ export default defineType({
             withFilename: true,
           },
         },
+        {
+          type: 'youtube',
+          title: 'YouTube Video',
+        },
       ],
     }),
     defineField({

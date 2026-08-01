@@ -232,6 +232,11 @@ export default function RootLayout({
 				/>
 				<link
 					rel="preconnect"
+					href="https://cdn.sanity.io"
+					crossOrigin="anonymous"
+				/>
+				<link
+					rel="preconnect"
 					href="https://assets.chanhdai.com"
 					crossOrigin="anonymous"
 				/>

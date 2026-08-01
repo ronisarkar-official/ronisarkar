@@ -3,9 +3,32 @@ import Image from 'next/image'
 import { urlFor } from '@/lib/sanity'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { getYouTubeId } from '@/lib/youtube'
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
+    youtube: ({ value }: any) => {
+      const videoId = getYouTubeId(value?.url)
+      if (!videoId) return null
+
+      return (
+        <figure className="my-8 overflow-hidden rounded-lg border border-border bg-card">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+            title={value?.title || 'YouTube video'}
+            className="aspect-video w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+          />
+          {value?.title && (
+            <figcaption className="border-t border-border px-4 py-2 text-center text-sm text-muted-foreground">
+              {value.title}
+            </figcaption>
+          )}
+        </figure>
+      )
+    },
     image: ({ value }: any) => {
       if (!value?.asset) return null
 
