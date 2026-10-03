@@ -38,11 +38,16 @@ function normalizeDateString(dateStr: string) {
 	}
 }
 
+interface MonthLabel {
+	month: string;
+	x: number;
+}
+
 interface GridData {
 	weeks: Activity[][];
 	width: number;
 	height: number;
-	monthLabels: string[];
+	monthLabels: MonthLabel[];
 	totalContributions: number;
 }
 
@@ -72,8 +77,9 @@ function buildContributionGrid(
 	const startTs = endTs - (WEEKS * 7 - 1) * MS_PER_DAY;
 
 	const weeks: Activity[][] = Array.from({ length: WEEKS }, () => new Array(7));
-	const monthLabels = new Array(WEEKS).fill('');
-	const shown = new Set<number>();
+	const monthLabels: MonthLabel[] = [];
+	const shownMonths = new Set<number>();
+	let lastLabeledWeek = -4;
 
 	for (let i = 0; i < WEEKS * 7; i++) {
 		const wk = Math.floor(i / 7),
@@ -87,9 +93,17 @@ function buildContributionGrid(
 		const d = new Date(ts);
 		const dayOfMonth = d.getUTCDate();
 		const month = d.getUTCMonth();
-		if (ts <= todayTs && dayOfMonth === 1 && !shown.has(month)) {
-			monthLabels[wk] = MONTHS[month];
-			shown.add(month);
+		if (ts <= todayTs && dayOfMonth === 1 && !shownMonths.has(month)) {
+			// Ensure at least 2 weeks distance from previous label to avoid crowding
+			if (wk - lastLabeledWeek >= 2) {
+				const x = wk * (squareSize + gap);
+				monthLabels.push({
+					month: MONTHS[month],
+					x,
+				});
+				shownMonths.add(month);
+				lastLabeledWeek = wk;
+			}
 		}
 	}
 
@@ -117,44 +131,43 @@ export default async function ContributionGraph({
 		buildContributionGrid(data, squareSize, gap);
 
 	return (
-		<><div className="flex items-center justify-between  px-6 md:px-0">
-					<div className="flex flex-col">
-						<h2 className="text-3xl font-semibold text-foreground">
-							GitHub Activity
-						</h2>
-						<span className="text-md text-muted-foreground">
-							Total: {totalContributions} contributions
-						</span>
-					</div>
+		<>
+			<div className="flex items-center justify-between px-6 md:px-0">
+				<div className="flex flex-col">
+					<h2 className="text-3xl font-semibold text-foreground">
+						GitHub Activity
+					</h2>
+					<span className="text-md text-muted-foreground">
+						Total: {totalContributions} contributions
+					</span>
 				</div>
+			</div>
 			<div
 				className={`relative overflow-x-auto md:overflow-x-visible max-w-full ${className}`}
 				style={{ width: width + 'px' }}>
-				{/* Header with Total Contributions */}
-				
-
 				{/* Month labels row */}
 				<div
-					className="flex mb-1 text-xs text-muted-foreground flex-row ml-2 md:ml-2"
-					style={{ marginBottom: 6 }}>
-					<div style={{ width: squareSize }} />
-					{/* spacer for weekday column */}
-					{monthLabels.map((m, i) => (
-						<div
-							key={i}
-							style={{
-								width: squareSize,
-								marginRight: gap,
-								textAlign: 'center',
-							}}
-							aria-hidden
-							className="text-center flex-shrink-0">
-							{m || ''}
-						</div>
-					))}
+					className="relative mb-2 text-xs text-muted-foreground select-none"
+					style={{ width: width + 'px', height: 16 }}
+					aria-hidden>
+					{monthLabels.map(({ month, x }) => {
+						const isNearEnd = x + 24 > width;
+						return (
+							<span
+								key={`${month}-${x}`}
+								className="absolute text-xs text-muted-foreground"
+								style={
+									isNearEnd
+										? { right: 0 }
+										: { left: `${x}px` }
+								}>
+								{month}
+							</span>
+						);
+					})}
 				</div>
 
-				<div className='flex'>
+				<div className="flex">
 					{/* SVG grid with client-side tooltip */}
 					<ContributionGraphClient>
 						<svg

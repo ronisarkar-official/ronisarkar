@@ -1,13 +1,6 @@
 import { getSiteSettings } from '@/lib/sanity';
 import { PortableText } from '@portabletext/react';
-
-const getGreeting = () => {
-	const hour = new Date().getHours();
-	if (hour >= 5 && hour < 12) return 'Good morning';
-	if (hour >= 12 && hour < 17) return 'Good afternoon';
-	if (hour >= 17 && hour < 21) return 'Good evening';
-	return 'Good night';
-};
+import Greeting from '@/components/Greeting';
 
 const About = async () => {
 	const proseClasses =
@@ -33,7 +26,9 @@ const About = async () => {
 	return (
 		<section className="space-y-4" id="about">
 			<div className="space-y-4">
-				<h2 className="text-3xl font-semibold text-foreground">{getGreeting()}</h2>
+				<h2 className="text-3xl font-semibold text-foreground">
+					<Greeting />
+				</h2>
 				<div className={proseClasses}>
 					{settings?.aboutContent ? (
 						<PortableText value={settings.aboutContent} components={components} />

@@ -4,7 +4,7 @@ import { NextStudio } from 'next-sanity/studio';
 import config from '@/sanity.config';
 import { useEffect } from 'react';
 
-export default function StudioPage() {
+export default function AdminPage() {
 	// Suppress React 19 warning about disableTransition prop
 	// This is a known issue with Sanity Studio and will be fixed in future versions
 	// https://github.com/sanity-io/next-sanity/issues/822
@@ -28,5 +28,9 @@ export default function StudioPage() {
 		};
 	}, []);
 
-	return <NextStudio config={config} />;
+	return (
+		<div className="sanity-studio-wrapper w-full h-full flex-1 min-h-0 flex flex-col">
+			<NextStudio config={config} />
+		</div>
+	);
 }

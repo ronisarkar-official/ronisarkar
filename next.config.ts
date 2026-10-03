@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
 				protocol: 'https',
 				hostname: 'cdn.sanity.io',
 			},
+			{
+				protocol: 'https',
+				hostname: '**.googleusercontent.com',
+			},
 		],
 		formats: ['image/avif', 'image/webp'],
 	},
@@ -32,6 +36,20 @@ const nextConfig: NextConfig = {
 	// Optimize production builds
 	compress: true,
 	poweredByHeader: false,
+	async redirects() {
+		return [
+			{
+				source: '/studio',
+				destination: '/admin',
+				permanent: true,
+			},
+			{
+				source: '/studio/:path*',
+				destination: '/admin/:path*',
+				permanent: true,
+			},
+		];
+	},
 };
 
 export default nextConfig;

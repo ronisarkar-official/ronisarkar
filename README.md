@@ -169,7 +169,7 @@ portfolio-nextjs/
 │   │   └── page.tsx        # Blog listing
 │   ├── contact/            # Contact form
 │   ├── projects/           # Projects showcase
-│   ├── studio/             # Sanity Studio
+│   ├── admin/              # Sanity Studio (Admin)
 │   ├── layout.tsx          # Root layout
 │   └── page.tsx            # Home page
 ├── components/              # React components
@@ -219,7 +219,7 @@ Automatic dark mode detection with manual toggle support.
 
 ### Adding Blog Posts (Sanity CMS)
 
-1. Navigate to `/studio` in your browser
+1. Navigate to `/admin` in your browser
 2. Create a new blog post with:
    - Title, slug, and excerpt
    - Cover image and content blocks

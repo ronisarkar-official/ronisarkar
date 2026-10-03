@@ -9,7 +9,9 @@ import { CalendarIcon, ClockIcon, ArrowLeftIcon, CalendarDaysIcon } from 'lucide
 import Link from 'next/link';
 import { formatDate, formatRelativeTime } from '@/lib/utils';
 import type { Metadata } from 'next';
-import ShareButton from '@/components/blog/ShareButton';
+import { ShareMenu } from '@/components/share-menu';
+import { TOCMinimap } from '@/components/toc-minimap';
+import { extractTocFromPortableText } from '@/lib/toc';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -83,6 +85,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   const readingTime = calculateReadingTime(post.body);
+  const tocItems = extractTocFromPortableText(post.body);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://roni-sarkar.vercel.app';
 
@@ -128,7 +131,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      {/* Floating TOC Minimap on Desktop */}
+      {tocItems.length > 0 && (
+        <aside
+          aria-label="Table of contents"
+          className="fixed right-4 2xl:right-10 top-32 z-30 hidden xl:block"
+        >
+          <TOCMinimap items={tocItems} />
+        </aside>
+      )}
+
       {/* JSON-LD for Article */}
       <script
         type="application/ld+json"
@@ -207,7 +220,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             )}
 
             {/* Title */}
-            <h1 className="bg-gradient-to-br from-foreground to-foreground/80 bg-clip-text text-4xl font-bold leading-tight tracking-tight text-transparent sm:text-5xl lg:text-6xl">
+            <h1 className="bg-linear-to-br from-foreground to-foreground/80 bg-clip-text text-4xl font-bold leading-tight tracking-tight text-transparent sm:text-5xl lg:text-6xl">
               {post.title}
             </h1>
             {/* Metadata */}
@@ -238,8 +251,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </time>
               </div>
 
-              <div className="ml-auto flex items-center">
-                <ShareButton title={post.title} slug={post.slug.current} />
+              <div className="ml-auto flex items-center gap-2">
+                {tocItems.length > 0 && (
+                  <div className="xl:hidden">
+                    <TOCMinimap items={tocItems} />
+                  </div>
+                )}
+                <ShareMenu
+                  title={post.title}
+                  url={`/blog/${post.slug.current}`}
+                  showLabel
+                />
               </div>
             </div>
           </div>

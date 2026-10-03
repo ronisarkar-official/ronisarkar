@@ -27,6 +27,7 @@ Allow: /
 # Allow all other crawlers (including Googlebot for search)
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /studio
 Disallow: /api
 

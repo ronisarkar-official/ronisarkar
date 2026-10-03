@@ -259,8 +259,13 @@ export interface Award {
   grade: string
   date: string
   description?: any[]
-  referenceLink?: string
   icon?: string
+  pinned?: boolean
+  order?: number
+  imageUrl?: string
+  image?: {
+    alt?: string
+  }
 }
 
 /**
@@ -274,8 +279,13 @@ export async function getAwards(): Promise<Award[]> {
     grade,
     date,
     description,
-    referenceLink,
-    icon
+    icon,
+    pinned,
+    order,
+    "imageUrl": image.asset->url,
+    image {
+      alt
+    }
   }`
 
   try {

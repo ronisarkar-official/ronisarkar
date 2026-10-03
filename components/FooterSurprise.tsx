@@ -2,7 +2,11 @@
 
 import { Rocket } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
-import { Tooltip, TooltipTrigger, TooltipPanel } from '@/components/animate-ui/components/base/tooltip';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
 
 export default function FooterSurprise() {
   const controls = useAnimation();
@@ -19,19 +23,22 @@ export default function FooterSurprise() {
   };
 
   return (
-    <Tooltip delay={200}>
-      <TooltipTrigger
-        onClick={launchRocket}
-        className="flex items-center justify-center p-2 text-muted-foreground hover:text-primary transition-colors"
-        aria-label="Launch to top"
-      >
-        <motion.div animate={controls}>
-          <Rocket className="size-5 hover:animate-bounce" />
-        </motion.div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={launchRocket}
+          className="flex items-center justify-center p-2 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+          aria-label="Launch to top"
+        >
+          <motion.div animate={controls}>
+            <Rocket className="size-5 hover:animate-bounce" />
+          </motion.div>
+        </button>
       </TooltipTrigger>
-      <TooltipPanel>
+      <TooltipContent side="top">
         Blast off! 🚀
-      </TooltipPanel>
+      </TooltipContent>
     </Tooltip>
   );
 }

@@ -58,3 +58,14 @@ export function formatRelativeTime(date: string | Date): string {
 	const diffInYears = Math.floor(diffInDays / 365);
 	return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
 }
+
+export function slugify(text?: string | null): string {
+	if (!text || typeof text !== 'string') return '';
+	return text
+		.toLowerCase()
+		.trim()
+		.replace(/[^\w\s-]/g, '')
+		.replace(/[\s_-]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+

@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -13,6 +12,7 @@ import {
 	User,
 	Code,
 	PenTool,
+	Award,
 	Mail,
 	Github,
 	Linkedin,
@@ -45,14 +45,59 @@ interface RecentPage {
 	timestamp: number;
 }
 
+interface BlogPostItem {
+	id: string;
+	title: string;
+	slug: string;
+	publishedAt?: string;
+	category?: string | null;
+}
+
 export default function CommandMenu() {
 	const [open, setOpen] = React.useState(false);
 	const [searchValue, setSearchValue] = React.useState('');
 	const [recentPages, setRecentPages] = React.useState<RecentPage[]>([]);
+	const [blogPosts, setBlogPosts] = React.useState<BlogPostItem[]>([]);
+	const [isLoadingPosts, setIsLoadingPosts] = React.useState(false);
 	const [currentTime, setCurrentTime] = React.useState('');
-	const [calculatorResult, setCalculatorResult] = React.useState<string | null>(null);
+	const [calculatorResult, setCalculatorResult] = React.useState<string | null>(
+		null,
+	);
 	const router = useRouter();
 	const { setTheme, theme } = useTheme();
+	const lastFetchedRef = React.useRef<number>(0);
+
+	// Fetch blog posts dynamically from /api/posts
+	const fetchBlogPosts = React.useCallback(async () => {
+		if (Date.now() - lastFetchedRef.current < 60000 && blogPosts.length > 0) {
+			return;
+		}
+		try {
+			setIsLoadingPosts(true);
+			const res = await fetch('/api/posts');
+			if (res.ok) {
+				const data = await res.json();
+				if (Array.isArray(data)) {
+					setBlogPosts(data);
+					lastFetchedRef.current = Date.now();
+				}
+			}
+		} catch (err) {
+			console.error('Failed to fetch blog posts for command menu:', err);
+		} finally {
+			setIsLoadingPosts(false);
+		}
+	}, [blogPosts.length]);
+
+	React.useEffect(() => {
+		fetchBlogPosts();
+	}, [fetchBlogPosts]);
+
+	React.useEffect(() => {
+		if (open) {
+			fetchBlogPosts();
+		}
+	}, [open, fetchBlogPosts]);
 
 	// Track recent pages
 	React.useEffect(() => {
@@ -69,7 +114,10 @@ export default function CommandMenu() {
 	const addRecentPage = React.useCallback((path: string, label: string) => {
 		setRecentPages((prev) => {
 			const filtered = prev.filter((p) => p.path !== path);
-			const updated = [{ path, label, timestamp: Date.now() }, ...filtered].slice(0, 5);
+			const updated = [
+				{ path, label, timestamp: Date.now() },
+				...filtered,
+			].slice(0, 5);
 			localStorage.setItem('recentPages', JSON.stringify(updated));
 			return updated;
 		});
@@ -164,6 +212,36 @@ export default function CommandMenu() {
 		console.log(`Copied ${label} to clipboard`);
 	}, []);
 
+	// High-precision search filter for commands, pages, and blog posts
+	const customFilter = React.useCallback(
+		(value: string, search: string, keywords?: string[]) => {
+			const query = search.toLowerCase().trim();
+			if (!query) return 1;
+
+			const val = value.toLowerCase();
+
+			// Exact substring in item value
+			if (val.includes(query)) return 1;
+
+			// Exact substring in any keyword
+			if (keywords && keywords.some((k) => k.toLowerCase().includes(query))) {
+				return 0.8;
+			}
+
+			// Substring match for all separated words in query
+			const queryWords = query.split(/\s+/).filter(Boolean);
+			if (queryWords.length > 1) {
+				const fullTarget = `${val} ${keywords?.join(' ') || ''}`.toLowerCase();
+				if (queryWords.every((w) => fullTarget.includes(w))) {
+					return 0.6;
+				}
+			}
+
+			return 0;
+		},
+		[],
+	);
+
 	return (
 		<Dialog.Root
 			open={open}
@@ -195,11 +273,14 @@ export default function CommandMenu() {
 								<VisuallyHidden>
 									<Dialog.Title>Global Command Menu</Dialog.Title>
 									<Dialog.Description>
-										Search for pages, calculate, change theme, or access social links.
+										Search for pages, calculate, change theme, or access social
+										links.
 									</Dialog.Description>
 								</VisuallyHidden>
 
-								<Command className="w-full h-full" shouldFilter={false}>
+								<Command
+									className="w-full h-full"
+									filter={customFilter}>
 									{/* Header with Time and Keyboard Shortcut */}
 									<div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50">
 										<div className="flex items-center gap-2 text-xs text-neutral-500">
@@ -223,7 +304,6 @@ export default function CommandMenu() {
 											className="w-full h-12 bg-transparent outline-none text-lg text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-500"
 											placeholder="Type a command or search..."
 										/>
-
 									</div>
 
 									<Command.List className="max-h-[400px] overflow-y-auto overflow-x-hidden py-2 px-2 scrollbar-hide">
@@ -238,6 +318,7 @@ export default function CommandMenu() {
 													heading="Calculator"
 													className="text-xs font-medium text-neutral-500 mb-2 px-2">
 													<Command.Item
+														value={`${searchValue} ${calculatorResult}`.toLowerCase()}
 														onSelect={() =>
 															runCommand(() =>
 																copyToClipboard(
@@ -248,7 +329,12 @@ export default function CommandMenu() {
 														}
 														className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
 														<Calculator className="w-4 h-4" />
-														<span className="flex-1">{searchValue} <span className="font-semibold">{calculatorResult}</span></span>
+														<span className="flex-1">
+															{searchValue}{' '}
+															<span className="font-semibold">
+																{calculatorResult}
+															</span>
+														</span>
 														<Copy className="w-3 h-3 text-neutral-400" />
 													</Command.Item>
 												</Command.Group>
@@ -265,6 +351,7 @@ export default function CommandMenu() {
 													{recentPages.map((page) => (
 														<Command.Item
 															key={page.path}
+															value={`${page.label} ${page.path}`.toLowerCase()}
 															onSelect={() =>
 																runCommand(() => router.push(page.path))
 															}
@@ -287,7 +374,9 @@ export default function CommandMenu() {
 											className="text-xs font-medium text-neutral-500 mb-2 px-2">
 											<Command.Item
 												keywords={['home', 'main', 'index', 'landing']}
-												onSelect={() => runCommand(() => router.push('/'), '/', 'Home')}
+												onSelect={() =>
+													runCommand(() => router.push('/'), '/', 'Home')
+												}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
 												<Home className="w-4 h-4" />
 												Home
@@ -295,55 +384,142 @@ export default function CommandMenu() {
 											<Command.Item
 												keywords={['about', 'bio', 'profile', 'info']}
 												onSelect={() => {
-													runCommand(() => {
-														if (window.location.pathname === '/') {
-															document
-																.getElementById('about')
-																?.scrollIntoView({ behavior: 'smooth' });
-														} else {
-															router.push('/#about');
-														}
-													}, '/#about', 'About');
+													runCommand(
+														() => {
+															if (window.location.pathname === '/') {
+																document
+																	.getElementById('about')
+																	?.scrollIntoView({ behavior: 'smooth' });
+															} else {
+																router.push('/#about');
+															}
+														},
+														'/#about',
+														'About',
+													);
 												}}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
 												<User className="w-4 h-4" />
 												About
 											</Command.Item>
 											<Command.Item
-												keywords={['experience', 'work', 'career', 'jobs', 'resume']}
+												keywords={[
+													'experience',
+													'work',
+													'career',
+													'jobs',
+													'resume',
+												]}
 												onSelect={() => {
-													runCommand(() => {
-														if (window.location.pathname === '/') {
-															document
-																.getElementById('experience')
-																?.scrollIntoView({ behavior: 'smooth' });
-														} else {
-															router.push('/#experience');
-														}
-													}, '/#experience', 'Experience');
+													runCommand(
+														() => {
+															if (window.location.pathname === '/') {
+																document
+																	.getElementById('experience')
+																	?.scrollIntoView({ behavior: 'smooth' });
+															} else {
+																router.push('/#experience');
+															}
+														},
+														'/#experience',
+														'Experience',
+													);
 												}}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
 												<Briefcase className="w-4 h-4" />
 												Experience
 											</Command.Item>
 											<Command.Item
-												keywords={['projects', 'portfolio', 'work', 'code', 'github']}
+												keywords={[
+													'projects',
+													'portfolio',
+													'work',
+													'code',
+													'github',
+												]}
 												onSelect={() =>
-													runCommand(() => router.push('/projects'), '/projects', 'Projects')
+													runCommand(
+														() => router.push('/projects'),
+														'/projects',
+														'Projects',
+													)
 												}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
 												<Code className="w-4 h-4" />
 												Projects
 											</Command.Item>
 											<Command.Item
+												keywords={[
+													'achievements',
+													'awards',
+													'certificates',
+													'certifications',
+													'wins',
+												]}
+												onSelect={() =>
+													runCommand(
+														() => router.push('/achievements'),
+														'/achievements',
+														'Achievements',
+													)
+												}
+												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
+												<Award className="w-4 h-4" />
+												Achievements
+											</Command.Item>
+											<Command.Item
 												keywords={['blog', 'articles', 'writing', 'posts']}
-												onSelect={() => runCommand(() => router.push('/blog'), '/blog', 'Blog')}
+												onSelect={() =>
+													runCommand(
+														() => router.push('/blog'),
+														'/blog',
+														'Blog',
+													)
+												}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
 												<PenTool className="w-4 h-4" />
 												Blog
 											</Command.Item>
 										</Command.Group>
 										<Command.Separator className="h-px bg-neutral-200 dark:bg-neutral-800 my-2" />
+
+										{/* Blog Posts */}
+										{blogPosts.length > 0 && (
+											<>
+												<Command.Group
+													heading="Blog"
+													className="text-xs font-medium text-neutral-500 mb-2 px-2">
+													{blogPosts.map((post) => (
+														<Command.Item
+															key={post.id || post.slug}
+															value={`${post.title} ${post.slug}`.toLowerCase()}
+															keywords={[
+																'blog',
+																'post',
+																'article',
+																post.title.toLowerCase(),
+																post.slug.toLowerCase(),
+																...(post.category ?
+																	[post.category.toLowerCase()]
+																:	[]),
+															]}
+															onSelect={() =>
+																runCommand(
+																	() => router.push(`/blog/${post.slug}`),
+																	`/blog/${post.slug}`,
+																	post.title,
+																)
+															}
+															className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors"
+															title={post.title}>
+															<FileText className="w-4 h-4 shrink-0 text-neutral-500 dark:text-neutral-400" />
+															<span className="truncate">{post.title}</span>
+														</Command.Item>
+													))}
+												</Command.Group>
+												<Command.Separator className="h-px bg-neutral-200 dark:bg-neutral-800 my-2" />
+											</>
+										)}
 
 										{/* Appearance */}
 										<Command.Group
@@ -421,7 +597,10 @@ export default function CommandMenu() {
 												keywords={['download', 'resume', 'cv', 'pdf']}
 												onSelect={() =>
 													runCommand(() => {
-														window.open('https://drive.google.com/file/d/1LUALqh7wvyjfcw2xyT4ofS5aQALpxD6l/view', '_blank');
+														window.open(
+															'https://drive.google.com/file/d/1LUALqh7wvyjfcw2xyT4ofS5aQALpxD6l/view',
+															'_blank',
+														);
 													})
 												}
 												className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer aria-selected:bg-neutral-100 dark:aria-selected:bg-neutral-800 transition-colors">
@@ -448,7 +627,12 @@ export default function CommandMenu() {
 											heading="Social Media"
 											className="text-xs font-medium text-neutral-500 mb-2 px-2">
 											<Command.Item
-												keywords={['github', 'code', 'repository', 'open source']}
+												keywords={[
+													'github',
+													'code',
+													'repository',
+													'open source',
+												]}
 												onSelect={() =>
 													runCommand(() =>
 														window.open(
@@ -462,7 +646,12 @@ export default function CommandMenu() {
 												GitHub
 											</Command.Item>
 											<Command.Item
-												keywords={['linkedin', 'professional', 'network', 'career']}
+												keywords={[
+													'linkedin',
+													'professional',
+													'network',
+													'career',
+												]}
 												onSelect={() =>
 													runCommand(() =>
 														window.open(

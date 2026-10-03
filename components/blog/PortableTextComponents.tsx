@@ -4,6 +4,7 @@ import { urlFor } from '@/lib/sanity'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getYouTubeId } from '@/lib/youtube'
+import { slugify } from '@/lib/utils'
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
@@ -77,15 +78,51 @@ export const portableTextComponents: PortableTextComponents = {
     },
   },
   block: {
-    h2: ({ children }) => (
-      <h2 className="mb-4 mt-8 text-3xl font-bold">{children}</h2>
-    ),
-    h3: ({ children }) => (
-      <h3 className="mb-3 mt-6 text-2xl font-semibold">{children}</h3>
-    ),
-    h4: ({ children }) => (
-      <h4 className="mb-2 mt-4 text-xl font-semibold">{children}</h4>
-    ),
+    h2: ({ value, children }: any) => {
+      const text = value?.children
+        ? value.children.map((c: any) => c.text || '').join('')
+        : Array.isArray(children)
+          ? children.join('')
+          : typeof children === 'string'
+            ? children
+            : ''
+      const id = slugify(text)
+      return (
+        <h2 id={id || undefined} className="mb-4 mt-8 text-3xl font-bold scroll-mt-24">
+          {children}
+        </h2>
+      )
+    },
+    h3: ({ value, children }: any) => {
+      const text = value?.children
+        ? value.children.map((c: any) => c.text || '').join('')
+        : Array.isArray(children)
+          ? children.join('')
+          : typeof children === 'string'
+            ? children
+            : ''
+      const id = slugify(text)
+      return (
+        <h3 id={id || undefined} className="mb-3 mt-6 text-2xl font-semibold scroll-mt-24">
+          {children}
+        </h3>
+      )
+    },
+    h4: ({ value, children }: any) => {
+      const text = value?.children
+        ? value.children.map((c: any) => c.text || '').join('')
+        : Array.isArray(children)
+          ? children.join('')
+          : typeof children === 'string'
+            ? children
+            : ''
+      const id = slugify(text)
+      return (
+        <h4 id={id || undefined} className="mb-2 mt-4 text-xl font-semibold scroll-mt-24">
+          {children}
+        </h4>
+      )
+    },
     blockquote: ({ children }) => (
       <blockquote className="my-6 border-l-4 border-primary pl-4 italic text-muted-foreground">
         {children}

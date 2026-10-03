@@ -1,15 +1,11 @@
+import { Suspense } from 'react';
 import BlogSearch from '@/components/blog/BlogSearch';
+import BlogGridSkeleton from '@/components/blog/BlogGridSkeleton';
 import { getAllSanityPosts, getAllCategories } from '@/lib/sanity';
 
 export const revalidate = 60;
 
-export default async function BlogPage() {
-	// Fetch data server-side in parallel for optimal performance
-	const [posts, categories] = await Promise.all([
-		getAllSanityPosts(),
-		getAllCategories(),
-	]);
-
+export default function BlogPage() {
 	return (
 		<article className="mt-8 flex flex-col gap-8 pb-16">
 			<div className="flex flex-col gap-4">
@@ -20,11 +16,26 @@ export default async function BlogPage() {
 				</p>
 			</div>
 
-			{/* Client-side search and filtering */}
-			<BlogSearch
-				initialPosts={posts}
-				categories={categories}
-			/>
+			{/* Stream the slow Sanity data in after the shell renders,
+			    so page swaps stay instant and transitions stay seamless */}
+			<Suspense fallback={<BlogGridSkeleton />}>
+				<BlogContent />
+			</Suspense>
 		</article>
+	);
+}
+
+async function BlogContent() {
+	// Fetch data server-side in parallel for optimal performance
+	const [posts, categories] = await Promise.all([
+		getAllSanityPosts(),
+		getAllCategories(),
+	]);
+
+	return (
+		<BlogSearch
+			initialPosts={posts}
+			categories={categories}
+		/>
 	);
 }

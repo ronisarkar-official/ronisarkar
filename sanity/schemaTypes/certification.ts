@@ -36,6 +36,23 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'image',
+      title: 'Certificate Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative Text',
+          description: 'Description of the certificate image for accessibility',
+        },
+      ],
+      description: 'Upload your certificate or award image. Displayed prominently on the /achievements page.',
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'array',
@@ -128,16 +145,6 @@ export default defineType({
       description: 'Detailed description — supports rich text formatting (bold, italic, links). This will be shown in the expandable section.',
     }),
     defineField({
-      name: 'referenceLink',
-      title: 'Reference / Certificate Link',
-      type: 'url',
-      description: 'Link to the certificate image, verification page, or project demo. A link icon will appear so visitors can open it in a new tab.',
-      validation: (Rule) =>
-        Rule.uri({
-          scheme: ['http', 'https'],
-        }),
-    }),
-    defineField({
       name: 'icon',
       title: 'Icon Name',
       type: 'string',
@@ -145,23 +152,39 @@ export default defineType({
       initialValue: 'crown',
     }),
     defineField({
+      name: 'pinned',
+      title: 'Pin to Home Page',
+      type: 'boolean',
+      description: 'Pin this certificate to display it in the Achievements section on the Home page (/). Unpinned certificates will only appear on the /achievements page.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'order',
       title: 'Display Order',
       type: 'number',
-      description: 'Lower numbers appear first (leave empty to sort by date)',
+      description: 'Display order for pinned certificates (e.g., 1, 2, 3). Lower numbers appear first.',
       initialValue: 0,
     }),
   ],
   orderings: [
     {
-      title: 'Date (Newest)',
-      name: 'dateDesc',
-      by: [{ field: 'date', direction: 'desc' }],
+      title: 'Pinned First, Then Order',
+      name: 'pinnedOrder',
+      by: [
+        { field: 'pinned', direction: 'desc' },
+        { field: 'order', direction: 'asc' },
+        { field: 'date', direction: 'desc' },
+      ],
     },
     {
       title: 'Display Order',
       name: 'orderAsc',
       by: [{ field: 'order', direction: 'asc' }],
+    },
+    {
+      title: 'Date (Newest)',
+      name: 'dateDesc',
+      by: [{ field: 'date', direction: 'desc' }],
     },
   ],
   preview: {
@@ -169,11 +192,14 @@ export default defineType({
       title: 'title',
       subtitle: 'prize',
       date: 'date',
+      media: 'image',
+      pinned: 'pinned',
     },
-    prepare({ title, subtitle, date }) {
+    prepare({ title, subtitle, date, media, pinned }) {
       return {
-        title,
-        subtitle: `${subtitle}${date ? ` — ${date}` : ''}`,
+        title: `${pinned ? '📌 ' : ''}${title}`,
+        subtitle: `${subtitle}${date ? ` — ${date}` : ''}${pinned ? ' (Pinned to Home)' : ''}`,
+        media,
       }
     },
   },

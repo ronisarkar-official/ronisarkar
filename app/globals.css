@@ -297,3 +297,13 @@ code {
 		animation: none;
 	}
 }
+
+/* Sanity Studio fitted layout for /admin */
+.sanity-studio-wrapper,
+.sanity-studio-wrapper #sanity,
+.sanity-studio-wrapper [data-ui="NextStudioLayout"] {
+	height: 100% !important;
+	max-height: 100% !important;
+	min-height: 100% !important;
+}
+

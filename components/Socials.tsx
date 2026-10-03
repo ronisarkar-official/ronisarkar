@@ -4,8 +4,8 @@ import Icon from "./Icon";
 import {
   Tooltip,
   TooltipTrigger,
-  TooltipPanel,
-} from "@/components/animate-ui/components/base/tooltip";
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 export default function Socials() {
   const socials = socialSchema.parse(data).socials;
@@ -14,20 +14,18 @@ export default function Socials() {
     <section className="flex gap-4">
       {socials.map((item) => (
         <Tooltip key={item.name}>
-          <TooltipTrigger
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            render={
-              <a
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-              />
-            }
-          >
-            <span className="sr-only">{item.name}</span>
-            <Icon name={item.icon} aria-hidden="true" className="size-5" />
+          <TooltipTrigger asChild>
+            <a
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span className="sr-only">{item.name}</span>
+              <Icon name={item.icon} aria-hidden="true" className="size-5" />
+            </a>
           </TooltipTrigger>
-          <TooltipPanel side="top">{item.name}</TooltipPanel>
+          <TooltipContent side="top">{item.name}</TooltipContent>
         </Tooltip>
       ))}
     </section>

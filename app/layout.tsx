@@ -5,9 +5,9 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/components/theme-provider';
-import BackToTop from '@/components/BackToTop';
 import { Analytics } from '@vercel/analytics/react';
 import ClientShell from '@/components/ClientShell';
+import LayoutContainer from '@/components/LayoutContainer';
 
 const jetbrainsMono = JetBrains_Mono({
 	variable: '--font-jetbrains-mono',
@@ -261,13 +261,11 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange>
 					<ClientShell />
-					<Header />
-					<BackToTop />
-
-					<div className="mx-auto flex max-w-4xl flex-col px-8">
-						<main className="grow">{children}</main>
-					</div>			
-					<Footer />
+					<LayoutContainer
+						header={<Header />}
+						footer={<Footer />}>
+						{children}
+					</LayoutContainer>
 				</ThemeProvider>
 
 				{/* JSON-LD for rich results */}
