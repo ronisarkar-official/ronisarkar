@@ -5,6 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getYouTubeId } from '@/lib/youtube'
 import { slugify } from '@/lib/utils'
+import { LinkPreview } from '@/components/ui/link-preview'
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
@@ -88,7 +89,7 @@ export const portableTextComponents: PortableTextComponents = {
             : ''
       const id = slugify(text)
       return (
-        <h2 id={id || undefined} className="mb-4 mt-8 text-3xl font-bold scroll-mt-24">
+        <h2 id={id || undefined} className="mb-3 mt-8 text-xl sm:text-2xl font-semibold tracking-tight text-foreground scroll-mt-24">
           {children}
         </h2>
       )
@@ -103,7 +104,7 @@ export const portableTextComponents: PortableTextComponents = {
             : ''
       const id = slugify(text)
       return (
-        <h3 id={id || undefined} className="mb-3 mt-6 text-2xl font-semibold scroll-mt-24">
+        <h3 id={id || undefined} className="mb-2.5 mt-6 text-lg sm:text-xl font-medium tracking-tight text-foreground scroll-mt-24">
           {children}
         </h3>
       )
@@ -118,26 +119,26 @@ export const portableTextComponents: PortableTextComponents = {
             : ''
       const id = slugify(text)
       return (
-        <h4 id={id || undefined} className="mb-2 mt-4 text-xl font-semibold scroll-mt-24">
+        <h4 id={id || undefined} className="mb-2 mt-4 text-base sm:text-lg font-medium tracking-tight text-foreground scroll-mt-24">
           {children}
         </h4>
       )
     },
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-primary pl-4 italic text-muted-foreground">
+      <blockquote className="my-6 border-l-2 border-primary/60 pl-4 italic text-muted-foreground text-[15px] leading-relaxed">
         {children}
       </blockquote>
     ),
     normal: ({ children }) => (
-      <p className="mb-4 leading-7">{children}</p>
+      <p className="mb-4 leading-7 text-foreground/80">{children}</p>
     ),
   },
   list: {
     bullet: ({ children }) => (
-      <ul className="my-4 ml-6 list-disc space-y-2">{children}</ul>
+      <ul className="my-4 ml-6 list-disc space-y-1.5 text-foreground/90">{children}</ul>
     ),
     number: ({ children }) => (
-      <ol className="my-4 ml-6 list-decimal space-y-2">{children}</ol>
+      <ol className="my-4 ml-6 list-decimal space-y-1.5 text-foreground/90">{children}</ol>
     ),
   },
   listItem: {
@@ -146,31 +147,68 @@ export const portableTextComponents: PortableTextComponents = {
   },
   marks: {
     strong: ({ children }) => (
-      <strong className="font-semibold">{children}</strong>
+      <strong className="font-semibold text-foreground">{children}</strong>
     ),
     em: ({ children }) => <em className="italic">{children}</em>,
     code: ({ children }) => (
-      <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-sm font-mono text-zinc-200">
+      <code className="rounded bg-muted/70 px-1.5 py-0.5 text-xs sm:text-sm font-mono text-foreground border border-border/40">
         {children}
       </code>
     ),
-    underline: ({ children }) => <u className="underline">{children}</u>,
+    underline: ({ children }) => <u className="underline underline-offset-4">{children}</u>,
     'strike-through': ({ children }) => (
-      <s className="line-through">{children}</s>
+      <s className="line-through text-muted-foreground">{children}</s>
     ),
-    link: ({ value, children }) => {
-      const target = value?.blank ? '_blank' : undefined
+    link: ({ value, children }: any) => {
+      const href = value?.href
+      if (!href) return <>{children}</>
+
+      const target = value?.blank !== false ? '_blank' : undefined
       const rel = target === '_blank' ? 'noopener noreferrer' : undefined
 
+      const isExternalWeb = /^https?:\/\//i.test(href)
+
+      if (!isExternalWeb) {
+        return (
+          <a
+            href={href}
+            target={target}
+            rel={rel}
+            className="text-primary underline-offset-4 hover:underline"
+          >
+            {children}
+          </a>
+        )
+      }
+
+      const previewImg =
+        value?.previewImageUrl ||
+        (value?.previewImage?.asset ? urlFor(value.previewImage).url() : undefined)
+
+      if (previewImg) {
+        return (
+          <LinkPreview
+            url={href}
+            isStatic={true}
+            imageSrc={previewImg}
+            target={target}
+            rel={rel}
+            className="text-primary underline-offset-4 hover:underline font-medium inline"
+          >
+            {children}
+          </LinkPreview>
+        )
+      }
+
       return (
-        <a
-          href={value?.href}
+        <LinkPreview
+          url={href}
           target={target}
           rel={rel}
-          className="text-primary underline-offset-4 hover:underline"
+          className="text-primary underline-offset-4 hover:underline font-medium inline"
         >
           {children}
-        </a>
+        </LinkPreview>
       )
     },
   },

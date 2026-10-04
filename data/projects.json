@@ -1,19 +1,26 @@
 {
 	"projects": [
 		{
-			"name": "HR Management System",
-			"description": "A full-stack HRMS built in 8 hours for the Odoo Hackathon 2026. Features role-based auth, real-time attendance tracking, leave management with calendar UI, and payroll management — for both Admin and Employee roles.",
-			"image": "https://ik.imagekit.io/2zeqzsn1n/project7.webp?q-auto",
-			"tags": ["NextJS", "TypeScript", "TailwindCSS", "Supabase"],
+			"name": "Open Smile",
+			"description": "A gamified AI rewards platform built for the AI Unleashed hackathon. On-device MediaPipe scores how genuine your smile is in real time, converting your score into coins redeemable for real gift cards — with daily streaks, anti-cheat validation, and a live leaderboard.",
+			"image": "https://ik.imagekit.io/2zeqzsn1n/project8.webp?q-auto",
+			"tags": [
+				"NextJS",
+				"Python FastAPI",
+				"TypeScript",
+				"TailwindCSS",
+				"Supabase",
+				"MediaPipe"
+			],
 			"links": [
 				{
 					"name": "Website",
-					"href": "https://hr-management-system-tan.vercel.app/",
+					"href": "https://open-smile.vercel.app/",
 					"icon": "globe"
 				},
 				{
 					"name": "Source",
-					"href": "https://github.com/ronisarkar-official/hr-management-system",
+					"href": "https://github.com/ronisarkar-official/open-smile",
 					"icon": "github"
 				}
 			]
@@ -41,6 +48,25 @@
 				}
 			]
 		},
+		{
+			"name": "HR Management System",
+			"description": "A full-stack HRMS built in 8 hours for the Odoo Hackathon 2026. Features role-based auth, real-time attendance tracking, leave management with calendar UI, and payroll management — for both Admin and Employee roles.",
+			"image": "https://ik.imagekit.io/2zeqzsn1n/project7.webp?q-auto",
+			"tags": ["NextJS", "TypeScript", "TailwindCSS", "Supabase"],
+			"links": [
+				{
+					"name": "Website",
+					"href": "https://hr-management-system-tan.vercel.app/",
+					"icon": "globe"
+				},
+				{
+					"name": "Source",
+					"href": "https://github.com/ronisarkar-official/hr-management-system",
+					"icon": "github"
+				}
+			]
+		},
+
 		{
 			"name": "Doodl",
 			"description": "A real-time multiplayer drawing and guessing game where one player draws and others guess what they're drawing. Built with NextJs, TailwindCSS, and Socket.io.",

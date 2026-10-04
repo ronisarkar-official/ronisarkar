@@ -119,6 +119,14 @@ export default defineType({
                     type: 'boolean',
                     initialValue: true,
                   },
+                  {
+                    name: 'previewImage',
+                    type: 'image',
+                    title: 'Link Preview Image',
+                    description:
+                      'Optional: Upload a custom preview image for this link. If left empty, a screenshot will be auto-generated.',
+                    options: { hotspot: true },
+                  },
                 ],
               },
             ],

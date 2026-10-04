@@ -97,7 +97,16 @@ export async function getSanityPostBySlug(
     },
     publishedAt,
     excerpt,
-    body,
+    body[]{
+      ...,
+      markDefs[]{
+        ...,
+        _type == "link" => {
+          ...,
+          "previewImageUrl": previewImage.asset->url
+        }
+      }
+    },
     seo,
     featured,
     views
@@ -237,7 +246,16 @@ export async function getSiteSettings() {
     rotatingTitles,
     email,
     websiteUrl,
-    aboutContent
+    aboutContent[]{
+      ...,
+      markDefs[]{
+        ...,
+        _type == "link" => {
+          ...,
+          "previewImageUrl": previewImage.asset->url
+        }
+      }
+    }
   }`
 
   try {

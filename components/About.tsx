@@ -1,6 +1,7 @@
-import { getSiteSettings } from '@/lib/sanity';
+import { getSiteSettings, urlFor } from '@/lib/sanity';
 import { PortableText } from '@portabletext/react';
 import Greeting from '@/components/Greeting';
+import { LinkPreview } from '@/components/ui/link-preview';
 
 const About = async () => {
 	const proseClasses =
@@ -12,12 +13,48 @@ const About = async () => {
 	const components = {
 		marks: {
 			link: ({ value, children }: any) => {
-				const target = value?.blank ? '_blank' : undefined;
-				const rel = value?.blank ? 'noopener noreferrer' : undefined;
+				const href = value?.href;
+				if (!href) return <>{children}</>;
+
+				const target = value?.blank !== false ? '_blank' : undefined;
+				const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
+
+				const isExternalWeb = /^https?:\/\//i.test(href);
+
+				if (!isExternalWeb) {
+					return (
+						<a href={href} target={target} rel={rel}>
+							{children}
+						</a>
+					);
+				}
+
+				const previewImg =
+					value?.previewImageUrl ||
+					(value?.previewImage?.asset ? urlFor(value.previewImage).url() : undefined);
+
+				if (previewImg) {
+					return (
+						<LinkPreview
+							url={href}
+							isStatic={true}
+							imageSrc={previewImg}
+							target={target}
+							rel={rel}
+							className="font-medium underline underline-offset-4 inline">
+							{children}
+						</LinkPreview>
+					);
+				}
+
 				return (
-					<a href={value?.href} target={target} rel={rel}>
+					<LinkPreview
+						url={href}
+						target={target}
+						rel={rel}
+						className="font-medium underline underline-offset-4 inline">
 						{children}
-					</a>
+					</LinkPreview>
 				);
 			},
 		},
