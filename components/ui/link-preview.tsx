@@ -58,10 +58,15 @@ export const LinkPreview = ({
     if (isStatic) return true;
     return ogCache.has(url);
   });
+  const [hasInteracted, setHasInteracted] = React.useState(false);
   const [isImageLoading, setIsImageLoading] = React.useState(true);
 
   React.useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  const handleInteraction = React.useCallback(() => {
+    setHasInteracted(true);
   }, []);
 
   // Inverted: When website is in dark mode, request light screenshot; when light mode, request dark screenshot
@@ -90,7 +95,7 @@ export const LinkPreview = ({
       return;
     }
 
-    if (!url) return;
+    if (!url || (!hasInteracted && !isOpen)) return;
 
     if (ogCache.has(url)) {
       const cached = ogCache.get(url);
@@ -138,7 +143,7 @@ export const LinkPreview = ({
     return () => {
       isCancelled = true;
     };
-  }, [url, isStatic, imageSrc, fallbackScreenshotSrc]);
+  }, [url, isStatic, imageSrc, fallbackScreenshotSrc, hasInteracted, isOpen]);
 
   const displaySrc = isStatic ? imageSrc : (resolvedSrc || (isFetched ? fallbackScreenshotSrc : null));
 
@@ -162,11 +167,11 @@ export const LinkPreview = ({
   };
 
   React.useEffect(() => {
-    if (isMounted && displaySrc && typeof window !== 'undefined') {
+    if (isMounted && (isOpen || hasInteracted) && displaySrc && typeof window !== 'undefined') {
       const img = new window.Image();
       img.src = displaySrc;
     }
-  }, [isMounted, displaySrc]);
+  }, [isMounted, isOpen, hasInteracted, displaySrc]);
 
   return (
     <>
@@ -174,10 +179,15 @@ export const LinkPreview = ({
         openDelay={50}
         closeDelay={100}
         onOpenChange={(open) => {
+          if (open) setHasInteracted(true);
           setOpen(open);
         }}
       >
         <HoverCardPrimitive.Trigger
+          onMouseEnter={handleInteraction}
+          onPointerEnter={handleInteraction}
+          onFocus={handleInteraction}
+          onTouchStart={handleInteraction}
           onMouseMove={handleMouseMove}
           className={cn("text-foreground hover:text-primary transition-colors cursor-pointer", className)}
           href={url}

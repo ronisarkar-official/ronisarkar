@@ -116,10 +116,6 @@ export default function CommandMenu() {
 	}, [blogPosts.length]);
 
 	React.useEffect(() => {
-		fetchBlogPosts();
-	}, [fetchBlogPosts]);
-
-	React.useEffect(() => {
 		if (open) {
 			fetchBlogPosts();
 		}
@@ -149,8 +145,9 @@ export default function CommandMenu() {
 		});
 	}, []);
 
-	// Update time every second
+	// Update time every second only when command menu is open
 	React.useEffect(() => {
+		if (!open) return;
 		const updateTime = () => {
 			const now = new Date();
 			setCurrentTime(
@@ -170,7 +167,7 @@ export default function CommandMenu() {
 		updateTime();
 		const interval = setInterval(updateTime, 1000);
 		return () => clearInterval(interval);
-	}, []);
+	}, [open]);
 
 	// Calculator functionality
 	React.useEffect(() => {

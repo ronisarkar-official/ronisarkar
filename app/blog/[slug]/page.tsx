@@ -128,8 +128,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     },
   ];
 
+  const description =
+    post.seo?.metaDescription ||
+    post.excerpt ||
+    `Read ${post.title} by ${post.author?.name || 'Roni Sarkar'} — web development and software engineering article.`;
+
   return (
     <div className="relative min-h-screen bg-background">
+      {/* Meta description for SEO and search engine crawlers */}
+      <meta name="description" content={description} />
+
       {/* Floating TOC Minimap on Desktop & Tablets */}
       {tocItems.length > 0 && (
         <aside
@@ -161,6 +169,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               fill
               className="object-cover"
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 896px"
             />
             {post.mainImage.caption && (
               <figcaption className="mt-2 text-center text-sm text-muted-foreground">

@@ -36,6 +36,17 @@ const nextConfig: NextConfig = {
 	// Optimize production builds
 	compress: true,
 	poweredByHeader: false,
+	experimental: {
+		optimizePackageImports: [
+			'lucide-react',
+			'motion/react',
+			'framer-motion',
+			'@radix-ui/react-tooltip',
+			'@radix-ui/react-dialog',
+			'@radix-ui/react-hover-card',
+			'@radix-ui/react-separator',
+		],
+	},
 	async redirects() {
 		return [
 			{

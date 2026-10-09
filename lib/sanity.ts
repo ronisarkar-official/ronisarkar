@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { client } from '@/sanity/lib/client'
 import { PostCard, SanityPost } from '@/types/sanity.types'
 import imageUrlBuilder from '@sanity/image-url'
@@ -34,7 +35,7 @@ function calculateReadingTime(body: any[]): string {
 /**
  * Fetch all published posts
  */
-export async function getAllSanityPosts(): Promise<PostCard[]> {
+export const getAllSanityPosts = cache(async (): Promise<PostCard[]> => {
   const query = `*[_type == "post"] | order(publishedAt desc) {
     _id,
     title,
@@ -65,14 +66,14 @@ export async function getAllSanityPosts(): Promise<PostCard[]> {
     console.error('Error fetching posts:', error)
     return []
   }
-}
+})
 
 /**
  * Fetch a single post by slug
  */
-export async function getSanityPostBySlug(
+export const getSanityPostBySlug = cache(async (
   slug: string
-): Promise<SanityPost | null> {
+): Promise<SanityPost | null> => {
   const query = `*[_type == "post" && slug.current == $slug][0] {
     _id,
     _createdAt,
@@ -113,18 +114,18 @@ export async function getSanityPostBySlug(
   }`
 
   try {
-    const post = await client.fetch(query, { slug })
+    const post = await client.fetch(query, { slug }, { next: { revalidate: 60 } })
     return post
   } catch (error) {
     console.error('Error fetching post:', error)
     return null
   }
-}
+})
 
 /**
  * Fetch featured posts
  */
-export async function getFeaturedPosts(limit = 3): Promise<PostCard[]> {
+export const getFeaturedPosts = cache(async (limit = 3): Promise<PostCard[]> => {
   const query = `*[_type == "post" && featured == true] | order(publishedAt desc) [0...${limit}] {
     _id,
     title,
@@ -149,13 +150,13 @@ export async function getFeaturedPosts(limit = 3): Promise<PostCard[]> {
   }`
 
   try {
-    const posts = await client.fetch(query)
+    const posts = await client.fetch(query, {}, { next: { revalidate: 60 } })
     return posts
   } catch (error) {
     console.error('Error fetching featured posts:', error)
     return []
   }
-}
+})
 
 /**
  * Fetch posts by category
@@ -198,22 +199,22 @@ export async function getPostsByCategory(
 /**
  * Get all post slugs for static generation
  */
-export async function getAllPostSlugs(): Promise<string[]> {
+export const getAllPostSlugs = cache(async (): Promise<string[]> => {
   const query = `*[_type == "post"].slug.current`
 
   try {
-    const slugs = await client.fetch(query)
+    const slugs = await client.fetch(query, {}, { next: { revalidate: 60 } })
     return slugs
   } catch (error) {
     console.error('Error fetching slugs:', error)
     return []
   }
-}
+})
 
 /**
  * Get all categories
  */
-export async function getAllCategories() {
+export const getAllCategories = cache(async () => {
   const query = `*[_type == "category"] | order(title asc) {
     _id,
     title,
@@ -230,7 +231,7 @@ export async function getAllCategories() {
     console.error('Error fetching categories:', error)
     return []
   }
-}
+})
 
 /**
  * Get site settings (singleton document)

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
@@ -93,6 +93,15 @@ export const metadata: Metadata = {
 	},
 };
 
+export const viewport: Viewport = {
+	width: 'device-width',
+	initialScale: 1,
+	themeColor: [
+		{ media: '(prefers-color-scheme: light)', color: '#ffffff' },
+		{ media: '(prefers-color-scheme: dark)', color: '#000000' },
+	],
+};
+
 export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -178,28 +187,12 @@ export default function RootLayout({
 			<head>
 				<meta charSet="utf-8" />
 				<meta
-					name="viewport"
-					content="width=device-width, initial-scale=1, shrink-to-fit=no"
-				/>
-				<title>Roni Sarkar — Software Engineer &amp; Web Developer</title>
-				<meta
 					name="description"
-					content="Roni Sarkar - Full-Stack Developer specializing in Next.js, React, and modern web technologies. View my portfolio, projects, and blog posts."
+					content="Roni Sarkar - Software engineer and web developer building modern web apps with Next.js, React and Node.js. Portfolio, case studies and contact."
 				/>
 				<meta
 					name="google-site-verification"
 					content="h-sOGh3RDTQVIFlEQzlnvqZ7OOPT0bxEQxFnY9W_L5s"
-				/>
-				{/* Theme color for mobile browsers */}
-				<meta
-					name="theme-color"
-					content="#000000"
-					media="(prefers-color-scheme: dark)"
-				/>
-				<meta
-					name="theme-color"
-					content="#ffffff"
-					media="(prefers-color-scheme: light)"
 				/>
 
 				{/* Disable automatic detection and formatting of phone numbers */}
@@ -242,46 +235,15 @@ export default function RootLayout({
 					title="Full LLM Context"
 				/>
 
-				{/* Preconnect to external domains for faster resource loading */}
-				<link
-					rel="preconnect"
-					href="https://fonts.gstatic.com"
-					crossOrigin="anonymous"
-				/>
+				{/* Preconnect to external image CDN */}
 				<link
 					rel="preconnect"
 					href="https://ik.imagekit.io"
 					crossOrigin="anonymous"
 				/>
 				<link
-					rel="preconnect"
-					href="https://cdn.sanity.io"
-					crossOrigin="anonymous"
-				/>
-				<link
-					rel="preconnect"
-					href="https://assets.chanhdai.com"
-					crossOrigin="anonymous"
-				/>
-				<link
 					rel="dns-prefetch"
-					href="https://fonts.gstatic.com"
-				/>
-				<link
-					rel="dns-prefetch"
-					href="https://cdn.sanity.io"
-				/>
-				<link
-					rel="dns-prefetch"
-					href="https://assets.chanhdai.com"
-				/>
-
-				{/* Preload critical LCP hero image */}
-				<link
-					rel="preload"
-					as="image"
-					href="https://ik.imagekit.io/2zeqzsn1n/p-images/hero.webp"
-					fetchPriority="high"
+					href="https://ik.imagekit.io"
 				/>
 			</head>
 			<body

@@ -21,7 +21,9 @@ export default function Socials() {
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              <span className="sr-only">{item.name}</span>
+              <span className="sr-only">
+                {item.name === 'GitHub' ? "Roni Sarkar's GitHub Profile" : item.name}
+              </span>
               <Icon name={item.icon} aria-hidden="true" className="size-5" />
             </a>
           </TooltipTrigger>

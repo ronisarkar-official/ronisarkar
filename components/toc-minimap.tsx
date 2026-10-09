@@ -192,21 +192,29 @@ export function useActiveHeading(itemIds: string[]) {
 
   useEffect(() => {
     if (!itemIds || itemIds.length === 0) return
+    if (typeof window !== "undefined" && window.innerWidth < 768) return
+
+    let ticking = false
 
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 140
+      if (ticking) return
+      ticking = true
 
-      let currentId = itemIds[0] || null
-      for (const id of itemIds) {
-        const element = document.getElementById(id)
-        if (element) {
-          const top = element.getBoundingClientRect().top + window.scrollY
-          if (top <= scrollPosition) {
-            currentId = id
+      requestAnimationFrame(() => {
+        const scrollPosition = window.scrollY + 140
+        let currentId = itemIds[0] || null
+        for (const id of itemIds) {
+          const element = document.getElementById(id)
+          if (element) {
+            const top = element.getBoundingClientRect().top + window.scrollY
+            if (top <= scrollPosition) {
+              currentId = id
+            }
           }
         }
-      }
-      setActiveId(currentId)
+        setActiveId(currentId)
+        ticking = false
+      })
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true })

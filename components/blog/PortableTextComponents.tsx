@@ -1,11 +1,15 @@
 import type { PortableTextComponents } from '@portabletext/react'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getYouTubeId } from '@/lib/youtube'
 import { slugify } from '@/lib/utils'
 import { LinkPreview } from '@/components/ui/link-preview'
+
+const CodeBlock = dynamic(() => import('@/components/blog/CodeBlock'), {
+  loading: () => <div className="my-6 h-28 animate-pulse rounded-lg bg-zinc-800" />,
+  ssr: true,
+})
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
@@ -54,28 +58,7 @@ export const portableTextComponents: PortableTextComponents = {
     },
     code: ({ value }: any) => {
       if (!value) return null
-
-      return (
-        <div className="my-6">
-          {value.filename && (
-            <div className="rounded-t-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300">
-              {value.filename}
-            </div>
-          )}
-          <SyntaxHighlighter
-            language={value.language || 'javascript'}
-            style={vscDarkPlus}
-            customStyle={{
-              margin: 0,
-              borderRadius: value.filename ? '0 0 0.5rem 0.5rem' : '0.5rem',
-              fontSize: '0.9rem',
-            }}
-            showLineNumbers
-          >
-            {value.code}
-          </SyntaxHighlighter>
-        </div>
-      )
+      return <CodeBlock value={value} />
     },
   },
   block: {

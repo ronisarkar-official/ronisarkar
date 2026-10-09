@@ -41,8 +41,16 @@ export default function ViewCounter({
 			}
 		};
 
-		// Increment views on mount
-		incrementViews();
+		// Defer network increment so it does not block or compete with initial page render/LCP
+		const timer = setTimeout(() => {
+			if ('requestIdleCallback' in window) {
+				window.requestIdleCallback(() => incrementViews());
+			} else {
+				incrementViews();
+			}
+		}, 3000);
+
+		return () => clearTimeout(timer);
 	}, [slug, trackView]);
 
 	// Format view count (e.g., 1.2K, 1M)

@@ -62,34 +62,56 @@ function GithubStars({
   );
 
   const [stars, setStars] = React.useState(value ?? 0);
-  const [currentStars, setCurrentStars] = React.useState(0);
+  const [currentStars, setCurrentStars] = React.useState(value ?? 0);
   const [isLoading, setIsLoading] = React.useState(true);
   const isCompleted = React.useMemo(
-    () => currentStars === stars,
-    [currentStars, stars],
+    () => stars > 0 && currentStars === stars && !isLoading,
+    [currentStars, stars, isLoading],
   );
 
   const Component = asChild ? Slot : motion.div;
 
   React.useEffect(() => {
     if (value !== undefined && username && repo) return;
+    // Don't fetch on mobile where button is hidden to save battery and network bandwidth
+    if (typeof window !== 'undefined' && window.innerWidth < 640) return;
     if (!isInView) {
       setStars(0);
       setIsLoading(true);
       return;
     }
 
+    // Cache to prevent hitting GitHub unauthenticated rate limits (60/hr)
+    const cacheKey = `gh_stars_${username}_${repo}`;
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = parseInt(cached, 10);
+        if (!isNaN(parsed) && parsed > 0) {
+          setStars(parsed);
+          setIsLoading(false);
+          return;
+        }
+      }
+    } catch {
+      // Storage error ignored
+    }
+
+    // Defer the fetch until after page load has finished to prevent blocking main thread
     const timeout = setTimeout(() => {
       fetch(`https://api.github.com/repos/${username}/${repo}`)
         .then((response) => response.json())
         .then((data) => {
           if (data && typeof data.stargazers_count === 'number') {
             setStars(data.stargazers_count);
+            try {
+              sessionStorage.setItem(cacheKey, String(data.stargazers_count));
+            } catch {}
           }
         })
         .catch(console.error)
         .finally(() => setIsLoading(false));
-    }, delay);
+    }, Math.max(delay, 2000));
 
     return () => clearTimeout(timeout);
   }, [username, repo, value, isInView, delay]);
