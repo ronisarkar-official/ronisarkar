@@ -8,20 +8,22 @@ interface Props {
 }
 
 export function AchievementCard({ award }: Props) {
-	// Only use directly uploaded images from Sanity CMS
-	const certificateImage = award.imageUrl || null;
-	const linkTarget = certificateImage;
+	// Use pre-optimized thumbnail for fast rendering, full image for click link
+	const thumbnailImage = award.thumbnailUrl || award.imageUrl || null;
+	const linkTarget = award.imageUrl || null;
 
 	const content = (
 		<>
-			{certificateImage ? (
+			{thumbnailImage ? (
 				<div className="relative w-full aspect-[1.42/1] border rounded-lg overflow-hidden mb-3 bg-neutral-100 dark:bg-neutral-900/50 shrink-0">
 					<Image
-						src={certificateImage}
+						src={thumbnailImage}
 						alt={award.image?.alt || award.title}
 						fill
-						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-						className="object-contain p-0.5 outline -outline-offset-1 outline-black/10 dark:outline-white/10 group-hover:scale-[1.02] transition-transform duration-300"
+						unoptimized
+						className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+						placeholder={award.blurDataUrl ? 'blur' : 'empty'}
+						blurDataURL={award.blurDataUrl}
 						loading="lazy"
 					/>
 				</div>

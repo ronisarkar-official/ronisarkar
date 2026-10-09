@@ -110,12 +110,13 @@ function AwardRightIcons({ award }: { award: Award }) {
 
 						<div className="relative w-full aspect-[1.42/1] rounded-lg overflow-hidden border bg-neutral-100 dark:bg-neutral-900/50">
 							<Image
-								src={award.imageUrl}
+								src={award.modalUrl || award.imageUrl}
 								alt={award.image?.alt || `${award.title} certificate`}
 								fill
-								className="object-contain"
-								sizes="(max-width: 1024px) 95vw, 800px"
-								priority
+								unoptimized
+								className="object-cover"
+								placeholder={award.blurDataUrl ? 'blur' : 'empty'}
+								blurDataURL={award.blurDataUrl}
 							/>
 						</div>
 					</Dialog.Content>
@@ -134,7 +135,7 @@ function AwardMeta({ award }: { award: Award }) {
 				<dd>{award.prize}</dd>
 				<Separator
 					orientation="vertical"
-					className="!h-3 !w-px"
+					className="h-3! w-px!"
 					aria-hidden="true"
 				/>
 				<dt className="sr-only">Date</dt>
@@ -145,7 +146,7 @@ function AwardMeta({ award }: { award: Award }) {
 				</dd>
 				<Separator
 					orientation="vertical"
-					className="!h-3 !w-px"
+					className="h-3! w-px!"
 					aria-hidden="true"
 				/>
 				<dt className="sr-only">Grade</dt>
@@ -175,7 +176,7 @@ function AwardItemExpandable({ award }: { award: Award }) {
 							<div className="flex flex-1 items-center gap-2">
 								<AwardMeta award={award} />
 								<AwardRightIcons award={award} />
-								<div className="flex size-6 items-center justify-center transition-transform duration-300 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]/trigger:rotate-180">
+								<div className="flex size-6 items-center justify-center transition-transform duration-300 ease-[cubic-bezier(0.87,0,0.13,1)] group-data-[state=open]/trigger:rotate-180">
 									<ChevronDown className="size-4" />
 								</div>
 							</div>
@@ -184,7 +185,7 @@ function AwardItemExpandable({ award }: { award: Award }) {
 				</div>
 
 				<AccordionContent>
-					<div className="ml-[60px] border-l border-dashed border-muted-foreground/20 px-4 pb-2">
+					<div className="ml-15 border-l border-dashed border-muted-foreground/20 px-4 pb-2">
 						<div className="border-t border-muted-foreground/10 pt-3">
 							<PortableTextContent
 								content={award.description}

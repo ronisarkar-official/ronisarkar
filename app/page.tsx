@@ -73,7 +73,7 @@ export default async function Home() {
 						tapScale={0.98}>
 						<ImageSwiper
 							images={imageUrls}
-							className="h-[233px] w-[175px] rounded-lg object-cover sm:h-[300px] sm:w-[225px]"
+							className="h-58.25 w-43.75 rounded-lg object-cover sm:h-75 sm:w-56.25"
 						/>
 					</SpringAnimated>
 				</div>
@@ -82,7 +82,7 @@ export default async function Home() {
 					<AvailabilityBadge className="mb-4 w-fit" />
 					<h1 className="title text-balance text-4xl sm:text-5xl">
 						Hey,I&apos;m{' '}
-						<span className="bg-gradient-to-r from-primary to-foreground bg-clip-text text-transparent">
+						<span className="bg-linear-to-r from-primary to-foreground bg-clip-text text-transparent">
 							Roni
 						</span>
 					</h1>

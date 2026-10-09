@@ -29,6 +29,9 @@ type LinkPreviewProps = {
   | { isStatic?: false; imageSrc?: never }
 );
 
+const ogCache = new Map<string, string | null>();
+const pendingFetches = new Map<string, Promise<string | null>>();
+
 export const LinkPreview = ({
   children,
   url,
@@ -41,10 +44,21 @@ export const LinkPreview = ({
   imageSrc = "",
   target,
   rel,
+  showDomain = false,
 }: LinkPreviewProps) => {
   const { resolvedTheme } = useTheme();
   const [isOpen, setOpen] = React.useState(false);
   const [isMounted, setIsMounted] = React.useState(false);
+  const [resolvedSrc, setResolvedSrc] = React.useState<string | null>(() => {
+    if (isStatic) return imageSrc;
+    if (ogCache.has(url)) return ogCache.get(url) || null;
+    return null;
+  });
+  const [isFetched, setIsFetched] = React.useState<boolean>(() => {
+    if (isStatic) return true;
+    return ogCache.has(url);
+  });
+  const [isImageLoading, setIsImageLoading] = React.useState(true);
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -53,8 +67,8 @@ export const LinkPreview = ({
   // Inverted: When website is in dark mode, request light screenshot; when light mode, request dark screenshot
   const screenshotTheme = isMounted && resolvedTheme === "dark" ? "light" : "dark";
 
-  let src;
-  if (!isStatic) {
+  const fallbackScreenshotSrc = React.useMemo(() => {
+    if (isStatic) return imageSrc;
     const params = encode({
       url,
       screenshot: true,
@@ -66,10 +80,67 @@ export const LinkPreview = ({
       "viewport.width": width * 3,
       "viewport.height": height * 3,
     });
-    src = `https://api.microlink.io/?${params}`;
-  } else {
-    src = imageSrc;
-  }
+    return `https://api.microlink.io/?${params}`;
+  }, [isStatic, imageSrc, url, screenshotTheme, width, height]);
+
+  React.useEffect(() => {
+    if (isStatic) {
+      setResolvedSrc(imageSrc);
+      setIsFetched(true);
+      return;
+    }
+
+    if (!url) return;
+
+    if (ogCache.has(url)) {
+      const cached = ogCache.get(url);
+      setResolvedSrc(cached || fallbackScreenshotSrc);
+      setIsFetched(true);
+      return;
+    }
+
+    let isCancelled = false;
+
+    const fetchOgImage = async () => {
+      try {
+        let fetchPromise = pendingFetches.get(url);
+        if (!fetchPromise) {
+          fetchPromise = fetch(`/api/link-preview?url=${encodeURIComponent(url)}`)
+            .then(async (res) => {
+              if (!res.ok) return null;
+              const data = await res.json();
+              return data?.image || null;
+            })
+            .catch(() => null);
+          pendingFetches.set(url, fetchPromise);
+        }
+
+        const ogImage = await fetchPromise;
+        ogCache.set(url, ogImage);
+
+        if (!isCancelled) {
+          setResolvedSrc(ogImage || fallbackScreenshotSrc);
+          setIsFetched(true);
+        }
+      } catch {
+        if (!isCancelled) {
+          ogCache.set(url, null);
+          setResolvedSrc(fallbackScreenshotSrc);
+          setIsFetched(true);
+        }
+      } finally {
+        pendingFetches.delete(url);
+      }
+    };
+
+    fetchOgImage();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [url, isStatic, imageSrc, fallbackScreenshotSrc]);
+
+  const displaySrc = isStatic ? imageSrc : (resolvedSrc || (isFetched ? fallbackScreenshotSrc : null));
 
   const domain = React.useMemo(() => {
     try {
@@ -83,8 +154,8 @@ export const LinkPreview = ({
   const x = useMotionValue(0);
   const translateX = useSpring(x, springConfig);
 
-  const handleMouseMove = (event: any) => {
-    const targetRect = event.target.getBoundingClientRect();
+  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
+    const targetRect = event.currentTarget.getBoundingClientRect();
     const eventOffsetX = event.clientX - targetRect.left;
     const offsetFromCenter = (eventOffsetX - targetRect.width / 2) / 2; // Subtle parallax effect
     x.set(offsetFromCenter);
@@ -92,10 +163,10 @@ export const LinkPreview = ({
 
   return (
     <>
-      {isMounted ? (
+      {isMounted && displaySrc ? (
         <span className="hidden" aria-hidden="true">
           <img
-            src={src}
+            src={displaySrc}
             width={width}
             height={height}
             alt="hidden image"
@@ -158,14 +229,37 @@ export const LinkPreview = ({
                       className="relative overflow-hidden rounded-lg bg-neutral-900 border border-neutral-800 dark:bg-neutral-100 dark:border-neutral-200"
                       style={{ height: `${height}px` }}
                     >
-                      <img
-                        src={isStatic ? imageSrc : src}
-                        width={width}
-                        height={height}
-                        className="w-full h-full object-cover rounded-lg outline -outline-offset-1 outline-white/10 dark:outline-black/10"
-                        alt={`${domain} preview`}
-                      />
+                      {displaySrc ? (
+                        <img
+                          src={displaySrc}
+                          width={width}
+                          height={height}
+                          onLoad={() => setIsImageLoading(false)}
+                          onError={() => {
+                            if (displaySrc !== fallbackScreenshotSrc) {
+                              ogCache.set(url, null);
+                              setResolvedSrc(fallbackScreenshotSrc);
+                            }
+                          }}
+                          className={cn(
+                            "w-full h-full object-cover rounded-lg outline -outline-offset-1 outline-white/10 dark:outline-black/10 transition-opacity duration-200",
+                            isImageLoading ? "opacity-0" : "opacity-100"
+                          )}
+                          alt={`${domain} preview`}
+                        />
+                      ) : null}
+
+                      {(!displaySrc || isImageLoading) && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/40 dark:bg-neutral-100/40 animate-pulse">
+                          <div className="w-4 h-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                        </div>
+                      )}
                     </div>
+                    {showDomain && (
+                      <div className="pt-1.5 px-1 pb-0.5 flex items-center justify-between gap-1 text-[11px] font-medium text-neutral-400 dark:text-neutral-500 truncate">
+                        <span className="truncate">{domain}</span>
+                      </div>
+                    )}
                   </a>
                 </motion.div>
               )}

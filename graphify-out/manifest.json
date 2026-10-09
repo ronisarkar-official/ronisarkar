@@ -72,10 +72,10 @@
     "semantic_hash": "f7f28f170879dbc0b9dff2ac2c02301d"
   },
   "app/page.tsx": {
-    "mtime": 1791050250.7621486,
-    "seen": 1791050621.41214,
-    "ast_hash": "844debff530ed710e75ffb9dddc1d779",
-    "semantic_hash": "844debff530ed710e75ffb9dddc1d779"
+    "mtime": 1791521879.8505979,
+    "seen": 1791523381.2716298,
+    "ast_hash": "8bb1f1929566bbb8527660ab29c16f6c",
+    "semantic_hash": ""
   },
   "app/projects/page.tsx": {
     "mtime": 1776657988.7555773,
@@ -150,9 +150,9 @@
     "semantic_hash": "47b170ec503055e191a9f750afcf4ed0"
   },
   "components/Certifications.tsx": {
-    "mtime": 1791011933.6286564,
-    "seen": 1791011982.8955035,
-    "ast_hash": "a9df745d96d754fb2ddefafea65b2b76",
+    "mtime": 1791523285.3705828,
+    "seen": 1791523381.2716608,
+    "ast_hash": "a8fd87f41f50a4a8721b9ff7c2cb652a",
     "semantic_hash": ""
   },
   "components/ClientShell.tsx": {
@@ -666,9 +666,9 @@
     "semantic_hash": "519b03793652f4387f291f6ecab8ab16"
   },
   "lib/sanity.ts": {
-    "mtime": 1791089594.1886623,
-    "seen": 1791089701.9350698,
-    "ast_hash": "2306a28ce251544b79076da12d06326b",
+    "mtime": 1791523226.7835178,
+    "seen": 1791523381.2718139,
+    "ast_hash": "f1d626518fd5970c4e78b76ea3336af1",
     "semantic_hash": ""
   },
   "lib/schemas.ts": {
@@ -966,9 +966,9 @@
     "semantic_hash": ""
   },
   "components/AchievementCard.tsx": {
-    "mtime": 1791011649.5202951,
-    "seen": 1791011675.7902231,
-    "ast_hash": "0a659883db5eab9046e53f7cdd5a2e7a",
+    "mtime": 1791523248.4637668,
+    "seen": 1791523381.2716477,
+    "ast_hash": "47486941dd566ca4a068a872e037bc4f",
     "semantic_hash": ""
   },
   "components/share-menu.tsx": {
@@ -1050,9 +1050,15 @@
     "semantic_hash": ""
   },
   "components/ui/link-preview.tsx": {
-    "mtime": 1791092194.6950479,
-    "seen": 1791092268.269305,
-    "ast_hash": "da15fde1d8028001ae2fa5f5ac645e11",
+    "mtime": 1791519977.1257372,
+    "seen": 1791520021.4463918,
+    "ast_hash": "a6f38e9a0d45c4d26b3a689672ea8b2f",
+    "semantic_hash": ""
+  },
+  "app/api/link-preview/route.ts": {
+    "mtime": 1791519878.074705,
+    "seen": 1791520021.446211,
+    "ast_hash": "c4dbc410fcc9f524c3dcaa87d3d03496",
     "semantic_hash": ""
   }
 }

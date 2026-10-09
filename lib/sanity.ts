@@ -281,6 +281,9 @@ export interface Award {
   pinned?: boolean
   order?: number
   imageUrl?: string
+  thumbnailUrl?: string
+  modalUrl?: string
+  blurDataUrl?: string
   image?: {
     alt?: string
   }
@@ -301,6 +304,9 @@ export async function getAwards(): Promise<Award[]> {
     pinned,
     order,
     "imageUrl": image.asset->url,
+    "thumbnailUrl": image.asset->url + "?w=800&auto=format&q=80",
+    "modalUrl": image.asset->url + "?w=1200&auto=format&q=85",
+    "blurDataUrl": image.asset->metadata.lqip,
     image {
       alt
     }
