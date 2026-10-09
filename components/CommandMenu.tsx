@@ -38,6 +38,12 @@ import {
 
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { useSound } from '@/hooks/use-sound';
+import { open001Sound } from '@/lib/open-001';
+import { close001Sound } from '@/lib/close-001';
+import { click001Sound } from '@/lib/click-001';
+import { confirmation001Sound } from '@/lib/confirmation-001';
+
 // Types
 interface RecentPage {
 	path: string;
@@ -66,6 +72,26 @@ export default function CommandMenu() {
 	const router = useRouter();
 	const { setTheme, theme } = useTheme();
 	const lastFetchedRef = React.useRef<number>(0);
+
+	// SoundCN Audio Effects
+	const [playOpen] = useSound(open001Sound, { volume: 0.22, interrupt: true });
+	const [playClose] = useSound(close001Sound, { volume: 0.18, interrupt: true });
+	const [playClick] = useSound(click001Sound, { volume: 0.12, interrupt: true });
+	const [playConfirm] = useSound(confirmation001Sound, { volume: 0.25, interrupt: true });
+
+	const handleOpenChange = React.useCallback(
+		(nextOpen: boolean) => {
+			if (nextOpen !== open) {
+				if (nextOpen) {
+					playOpen();
+				} else {
+					playClose();
+				}
+				setOpen(nextOpen);
+			}
+		},
+		[open, playOpen, playClose],
+	);
 
 	// Fetch blog posts dynamically from /api/posts
 	const fetchBlogPosts = React.useCallback(async () => {
@@ -176,15 +202,15 @@ export default function CommandMenu() {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
 				e.preventDefault();
-				setOpen((open) => !open);
+				handleOpenChange(!open);
 			}
 			// ESC to close
 			if (e.key === 'Escape' && open) {
-				setOpen(false);
+				handleOpenChange(false);
 			}
 		};
 
-		const toggle = () => setOpen((open) => !open);
+		const toggle = () => handleOpenChange(!open);
 
 		document.addEventListener('keydown', down);
 		document.addEventListener('toggle-command-menu', toggle);
@@ -192,25 +218,31 @@ export default function CommandMenu() {
 			document.removeEventListener('keydown', down);
 			document.removeEventListener('toggle-command-menu', toggle);
 		};
-	}, [open]);
+	}, [open, handleOpenChange]);
 
 	const runCommand = React.useCallback(
 		(command: () => void, pagePath?: string, pageLabel?: string) => {
+			playConfirm();
 			setOpen(false);
+			playClose();
 			setSearchValue('');
 			if (pagePath && pageLabel) {
 				addRecentPage(pagePath, pageLabel);
 			}
 			command();
 		},
-		[addRecentPage],
+		[addRecentPage, playConfirm, playClose],
 	);
 
-	const copyToClipboard = React.useCallback((text: string, label: string) => {
-		navigator.clipboard.writeText(text);
-		// You could add a toast notification here
-		console.log(`Copied ${label} to clipboard`);
-	}, []);
+	const copyToClipboard = React.useCallback(
+		(text: string, label: string) => {
+			navigator.clipboard.writeText(text);
+			playConfirm();
+			// You could add a toast notification here
+			console.log(`Copied ${label} to clipboard`);
+		},
+		[playConfirm],
+	);
 
 	// High-precision search filter for commands, pages, and blog posts
 	const customFilter = React.useCallback(
@@ -245,7 +277,7 @@ export default function CommandMenu() {
 	return (
 		<Dialog.Root
 			open={open}
-			onOpenChange={setOpen}>
+			onOpenChange={handleOpenChange}>
 			<AnimatePresence>
 				{open && (
 					<Dialog.Portal forceMount>
@@ -280,7 +312,12 @@ export default function CommandMenu() {
 
 								<Command
 									className="w-full h-full"
-									filter={customFilter}>
+									filter={customFilter}
+									onKeyDown={(e) => {
+										if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+											playClick();
+										}
+									}}>
 									{/* Header with Time and Keyboard Shortcut */}
 									<div className="flex items-center justify-between px-4 py-2 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50">
 										<div className="flex items-center gap-2 text-xs text-neutral-500">

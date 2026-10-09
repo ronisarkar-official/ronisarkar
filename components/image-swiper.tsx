@@ -238,6 +238,7 @@ export const ImageSwiper: React.FC<ImageSwiperProps> = memo(({
 						className="object-cover select-none pointer-events-none outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
 						draggable={false}
 						priority={originalIndex === 0}
+						fetchPriority={originalIndex === 0 ? 'high' : 'auto'}
 					/>
 				</div>
 			))}

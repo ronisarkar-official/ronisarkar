@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useCallback, useRef } from "react"
 
 import { cn, slugify } from "@/lib/utils"
 import {
@@ -8,6 +8,9 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { useSound } from "@/hooks/use-sound"
+import { uMiniMapOpenSound } from "@/lib/u-mini-map-open"
+import { click001Sound } from "@/lib/click-001"
 
 import { type TOCItemType, extractTocFromPortableText } from "@/lib/toc"
 export { type TOCItemType, extractTocFromPortableText }
@@ -20,6 +23,32 @@ export type TOCMinimapProps = {
 
 export function TOCMinimap({ items: propItems, className }: TOCMinimapProps) {
   const [scannedItems, setScannedItems] = useState<TOCItemType[]>([])
+  const [open, setOpen] = useState(false)
+  const [playOpen] = useSound(uMiniMapOpenSound, { volume: 0.25 })
+  const [playClick] = useSound(click001Sound, { volume: 0.2, interrupt: true })
+  const wasOpenRef = useRef(false)
+
+  const handleOpenChange = useCallback((nextOpen: boolean) => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setOpen(false)
+      return
+    }
+    setOpen(nextOpen)
+    if (nextOpen && !wasOpenRef.current) {
+      playOpen()
+    }
+    wasOpenRef.current = nextOpen
+  }, [playOpen])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setOpen(false)
+      }
+    }
+    window.addEventListener("resize", handleResize, { passive: true })
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
     if (propItems && propItems.length > 0) return
@@ -70,14 +99,25 @@ export function TOCMinimap({ items: propItems, className }: TOCMinimapProps) {
   return (
     <div className={cn("ml-auto w-18", className)}>
       <HoverCard
+        open={open}
+        onOpenChange={handleOpenChange}
         openDelay={0}
-        closeDelay={150}
+        closeDelay={250}
       >
         <HoverCardTrigger
           render={
             <div
               className="group/minimap flex max-h-[50dvh] flex-col gap-2.5 overflow-hidden py-3 pl-4 pr-1 opacity-80 hover:opacity-100 transition-opacity duration-200 cursor-pointer select-none"
               aria-label="Table of Contents Minimap"
+              role="button"
+              tabIndex={0}
+              onClick={() => handleOpenChange(!open)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  handleOpenChange(!open)
+                }
+              }}
             >
               {effectiveItems.map((item) => {
                 const isActive = item.url === `#${activeHeading}`
@@ -101,15 +141,16 @@ export function TOCMinimap({ items: propItems, className }: TOCMinimapProps) {
         />
 
         <HoverCardContent
-          className="w-64 max-w-[85vw] overflow-hidden p-0 duration-200 border border-border/80 bg-popover/95 backdrop-blur-md rounded-xl shadow-xl data-[side=left]:slide-in-from-right-3 data-[side=left]:slide-out-to-right-3 data-open:zoom-in-100 data-closed:zoom-out-100"
+          className="hidden md:block w-64 max-w-[85vw] overflow-hidden p-0 duration-200 border border-border/80 bg-popover/95 backdrop-blur-md rounded-xl shadow-xl data-[side=left]:slide-in-from-right-3 data-[side=left]:slide-out-to-right-3 data-open:zoom-in-100 data-closed:zoom-out-100"
           align="start"
           alignOffset={-4}
           side="left"
-          sideOffset={-50}
+          sideOffset={8}
         >
           <div className="flex max-h-[50dvh] flex-col overflow-y-auto overscroll-contain">
-            <div className="border-b border-border/60 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 ">
-              Table of Contents
+            <div className="border-b border-border/60 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 flex items-center justify-between">
+              <span>Table of Contents</span>
+              <span className="text-[10px] font-mono font-normal text-muted-foreground">{effectiveItems.length}</span>
             </div>
             <ul className="flex size-full flex-col px-3 py-2 text-sm">
               {effectiveItems.map((item) => {
@@ -121,13 +162,17 @@ export function TOCMinimap({ items: propItems, className }: TOCMinimapProps) {
                       data-depth={item.depth}
                       data-active={isActive}
                       className={cn(
-                        "line-clamp-2 w-full rounded-md px-2.5 py-1.5 text-xs transition-colors duration-150",
+                        "line-clamp-2 w-full rounded-md px-2.5 py-1.5 text-xs transition-colors duration-150 cursor-pointer",
                         "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
                         isActive && "bg-accent text-foreground font-medium",
                         item.depth === 3 && "pl-4",
                         item.depth >= 4 && "pl-7"
                       )}
-                      onClick={handleItemClick}
+                      onClick={(e) => {
+                        playClick()
+                        handleItemClick(e)
+                        setOpen(false)
+                      }}
                     >
                       {item.title}
                     </a>

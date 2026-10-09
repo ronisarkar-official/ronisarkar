@@ -161,19 +161,15 @@ export const LinkPreview = ({
     x.set(offsetFromCenter);
   };
 
+  React.useEffect(() => {
+    if (isMounted && displaySrc && typeof window !== 'undefined') {
+      const img = new window.Image();
+      img.src = displaySrc;
+    }
+  }, [isMounted, displaySrc]);
+
   return (
     <>
-      {isMounted && displaySrc ? (
-        <span className="hidden" aria-hidden="true">
-          <img
-            src={displaySrc}
-            width={width}
-            height={height}
-            alt="hidden image"
-          />
-        </span>
-      ) : null}
-
       <HoverCardPrimitive.Root
         openDelay={50}
         closeDelay={100}

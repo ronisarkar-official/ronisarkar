@@ -259,7 +259,7 @@ export async function getSiteSettings() {
   }`
 
   try {
-    const settings = await client.fetch(query)
+    const settings = await client.fetch(query, {}, { next: { revalidate: 300 } })
     return settings
   } catch (error) {
     console.error('Error fetching site settings:', error)

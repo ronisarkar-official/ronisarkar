@@ -2,6 +2,13 @@ import { Suspense } from 'react';
 import BlogSearch from '@/components/blog/BlogSearch';
 import BlogGridSkeleton from '@/components/blog/BlogGridSkeleton';
 import { getAllSanityPosts, getAllCategories } from '@/lib/sanity';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Blog',
+	description:
+		'Articles, tutorials, and insights by Roni Sarkar on web development, React, Next.js, and modern software engineering.',
+};
 
 export const revalidate = 60;
 

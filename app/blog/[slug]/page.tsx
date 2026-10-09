@@ -37,16 +37,22 @@ export async function generateMetadata({
   if (!post) {
     return {
       title: 'Post Not Found',
+      description: 'The requested blog post could not be found.',
     };
   }
 
+  const description =
+    post.seo?.metaDescription ||
+    post.excerpt ||
+    `Read ${post.title} by ${post.author?.name || 'Roni Sarkar'} — web development and software engineering article.`;
+
   return {
     title: post.title,
-    description: post.seo?.metaDescription || post.excerpt,
+    description,
     keywords: post.seo?.metaKeywords,
     openGraph: {
       title: post.title,
-      description: post.seo?.metaDescription || post.excerpt,
+      description,
       type: 'article',
       publishedTime: post.publishedAt,
       authors: [post.author.name],
@@ -124,11 +130,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div className="relative min-h-screen bg-background">
-      {/* Floating TOC Minimap on Desktop */}
+      {/* Floating TOC Minimap on Desktop & Tablets */}
       {tocItems.length > 0 && (
         <aside
           aria-label="Table of contents"
-          className="fixed right-4 2xl:right-10 top-32 z-30 hidden xl:block"
+          className="fixed right-2 md:right-4 2xl:right-10 top-32 z-30 hidden md:block"
         >
           <TOCMinimap items={tocItems} />
         </aside>
@@ -142,7 +148,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
 
 
-      <article className="mx-auto max-w-4xl px-4 pt-4">
+      <article className="mx-auto max-w-4xl px-4 md:pr-20 xl:pr-4 pt-4">
         {/* Back Button */}
         <BackButton />
 
@@ -222,12 +228,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </time>
               </div>
 
-              <div className="ml-auto flex items-center gap-2">
-                {tocItems.length > 0 && (
-                  <div className="xl:hidden">
-                    <TOCMinimap items={tocItems} />
-                  </div>
-                )}
+              <div className="ml-auto flex items-center">
                 <ShareMenu
                   title={post.title}
                   url={`/blog/${post.slug.current}`}

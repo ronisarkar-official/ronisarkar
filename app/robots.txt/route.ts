@@ -1,14 +1,20 @@
 const siteUrl =
 	process.env.NEXT_PUBLIC_BASE_URL || 'https://roni-sarkar.vercel.app';
 
-const robotsTxt = `# Allow search indexing, block AI training crawlers
+const robotsTxt = `# Allow search indexing, block AI training crawlers from bulk scraping while allowing llms.txt
 User-agent: GPTBot
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /
 
 User-agent: ClaudeBot
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /
 
 User-agent: Google-Extended
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /
 
 User-agent: Bytespider

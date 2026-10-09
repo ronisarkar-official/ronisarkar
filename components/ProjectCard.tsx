@@ -23,7 +23,7 @@ export function ProjectCard({ project }: Props) {
 		<SpotlightCard className="flex flex-col">
 			<CardHeader>
 				{image && (
-					<div className="relative w-full max-w-[500px] aspect-[5/3] border dark:bg-gray-800/50 rounded-xl overflow-hidden">
+					<div className="relative w-full max-w-[500px] aspect-[16/9] border dark:bg-gray-800/50 rounded-xl overflow-hidden">
 						<Image
 							src={image}
 							alt={`${name} project screenshot`}

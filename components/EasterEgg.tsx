@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useKonami } from '@/lib/useKonami';
 import confetti from 'canvas-confetti';
+import { useSound } from '@/hooks/use-sound';
+import { coinCollectSound } from '@/lib/coin-collect';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,8 +17,12 @@ import {
 
 export default function EasterEgg() {
   const [open, setOpen] = useState(false);
+  const [playCoin] = useSound(coinCollectSound, { volume: 0.35 });
 
-  useKonami(() => setOpen(true));
+  useKonami(() => {
+    setOpen(true);
+    playCoin();
+  });
 
   useEffect(() => {
     if (open) {

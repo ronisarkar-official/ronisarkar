@@ -22,8 +22,7 @@ const SanityBlogCard: React.FC<SanityBlogCardProps> = ({ post }) => {
 		<Link
 			key={post._id}
 			href={`/blog/${post.slug}`}
-			className="p-4 border rounded-lg min-h-80 max-h-80 flex flex-col overflow-hidden hover:[box-shadow:var(--shadow-border-hover)] transition-[box-shadow] duration-150 ease-out"
-			aria-label={`Read post: ${post.title}`}>
+			className="p-4 border rounded-lg min-h-80 max-h-80 flex flex-col overflow-hidden hover:[box-shadow:var(--shadow-border-hover)] transition-[box-shadow] duration-150 ease-out">
 			{post.mainImage?.url ? (
 				<div className="relative border rounded-lg overflow-hidden mb-2 h-48 flex-shrink-0">
 					<Image

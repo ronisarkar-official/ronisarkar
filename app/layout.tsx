@@ -181,6 +181,11 @@ export default function RootLayout({
 					name="viewport"
 					content="width=device-width, initial-scale=1, shrink-to-fit=no"
 				/>
+				<title>Roni Sarkar — Software Engineer &amp; Web Developer</title>
+				<meta
+					name="description"
+					content="Roni Sarkar - Full-Stack Developer specializing in Next.js, React, and modern web technologies. View my portfolio, projects, and blog posts."
+				/>
 				<meta
 					name="google-site-verification"
 					content="h-sOGh3RDTQVIFlEQzlnvqZ7OOPT0bxEQxFnY9W_L5s"
@@ -219,6 +224,24 @@ export default function RootLayout({
 					content="origin-when-cross-origin"
 				/>
 
+				{/* LLM discoverability following https://llmstxt.org/ specification */}
+				<link
+					rel="describedby"
+					href="/llms.txt"
+				/>
+				<link
+					rel="alternate"
+					type="text/plain"
+					href="/llms.txt"
+					title="LLM Overview"
+				/>
+				<link
+					rel="alternate"
+					type="text/plain"
+					href="/llms-full.txt"
+					title="Full LLM Context"
+				/>
+
 				{/* Preconnect to external domains for faster resource loading */}
 				<link
 					rel="preconnect"
@@ -251,6 +274,14 @@ export default function RootLayout({
 				<link
 					rel="dns-prefetch"
 					href="https://assets.chanhdai.com"
+				/>
+
+				{/* Preload critical LCP hero image */}
+				<link
+					rel="preload"
+					as="image"
+					href="https://ik.imagekit.io/2zeqzsn1n/p-images/hero.webp"
+					fetchPriority="high"
 				/>
 			</head>
 			<body

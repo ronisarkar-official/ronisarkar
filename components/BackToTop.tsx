@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
+import { useSound } from '@/hooks/use-sound';
+import { click001Sound } from '@/lib/click-001';
 
 type BackToTopProps = {
 	/** Number of pixels user must scroll before button shows (default: 300) */
@@ -21,6 +23,7 @@ export default function BackToTop({
 	ariaLabel = 'Back to top',
 }: BackToTopProps) {
 	const [visible, setVisible] = useState(false);
+	const [playClick] = useSound(click001Sound, { volume: 0.18, interrupt: true });
 	const mountedRef = useRef(false);
 	const ticking = useRef(false);
 
@@ -57,6 +60,7 @@ export default function BackToTop({
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();
+		playClick();
 		// Respect reduced motion: if user prefers reduced motion, jump to top
 		const reducedMotion = window.matchMedia(
 			'(prefers-reduced-motion: reduce)',

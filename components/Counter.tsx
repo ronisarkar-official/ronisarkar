@@ -1,6 +1,6 @@
 "use client";
 
-import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
+import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/Button";
 
@@ -11,12 +11,12 @@ export default function Counter() {
 
   return (
     <div className="flex items-center gap-3">
-      <Button size="icon" onClick={decrement}>
-        <MinusIcon />
+      <Button size="icon" onClick={decrement} aria-label="Decrease count">
+        <Minus className="size-4" />
       </Button>
       <p className="tabular-nums">Counter: {count}</p>
-      <Button size="icon" onClick={increment}>
-        <PlusIcon />
+      <Button size="icon" onClick={increment} aria-label="Increase count">
+        <Plus className="size-4" />
       </Button>
     </div>
   );

@@ -20,7 +20,7 @@ export default function TextFlip({ words, className }: TextFlipProps) {
 	}, [words.length]);
 
 	return (
-		<div className={className}>
+		<div className={`text-foreground font-medium ${className || ''}`}>
 			<AnimatePresence mode="wait">
 				<motion.div
 					key={words[index]}
@@ -28,7 +28,7 @@ export default function TextFlip({ words, className }: TextFlipProps) {
 					animate={{ y: 0, opacity: 1 }}
 					exit={{ y: -5, opacity: 0 }}
 					transition={{ duration: 0.5, ease: 'easeInOut' }}
-					className="inline-block">
+					className="inline-block text-foreground">
 					{words[index]}
 				</motion.div>
 			</AnimatePresence>

@@ -20,6 +20,7 @@ import LinkWithIcon from '@/components/LinkWithIcon';
 import About from '@/components/About';
 import Experience from '@/components/Experience';
 import Achievements from '@/components/Certifications';
+import { Suspense } from 'react';
 import { getAllSanityPosts, getSiteSettings, getAwards } from '@/lib/sanity';
 import SanityBlogCard from '@/components/blog/SanityBlogCard';
 import { ImageSwiper } from '@/components/image-swiper';
@@ -41,9 +42,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-	const posts = (await getAllSanityPosts()).slice(0, LIMIT);
-	const settings = await getSiteSettings();
-	const awards = await getAwards();
+	const [allPosts, settings, awards] = await Promise.all([
+		getAllSanityPosts().catch(() => []),
+		getSiteSettings().catch(() => null),
+		getAwards().catch(() => []),
+	]);
+	const posts = allPosts.slice(0, LIMIT);
 	const resumeUrl =
 		settings?.resumeUrl ||
 		'https://drive.google.com/file/d/1LUALqh7wvyjfcw2xyT4ofS5aQALpxD6l/view';
@@ -89,7 +93,7 @@ export default async function Home() {
 
 					<div
 						data-slot="panel-body"
-						className="space-y-2 mt-4 stagger-item">
+						className="space-y-2 mt-4 stagger-item text-foreground">
 						<div className="flex items-center gap-4 font-mono text-sm">
 							<div
 								className="flex size-6 shrink-0 items-center justify-center rounded-lg "
@@ -177,7 +181,9 @@ export default async function Home() {
 					</section>
 				</div>
 			</section>
-			<NowPlaying />
+			<Suspense fallback={null}>
+				<NowPlaying />
+			</Suspense>
 			<section className="flex flex-col gap-8">
 				<div className="flex justify-between">
 					<h2 className="title text-2xl font-semibold text-foreground sm:text-3xl">
@@ -193,7 +199,7 @@ export default async function Home() {
 				</div>
 				<Projects limit={LIMIT} />
 			</section>
-			<About />
+			<About settings={settings} />
 
 			<TechStack />
 			<ContributionGraph />

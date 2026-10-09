@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { useSound } from "@/hooks/use-sound"
+import { confirmation001Sound } from "@/lib/confirmation-001"
 
 export type ShareMenuProps = {
   /** Title passed to the native share sheet and social posts. */
@@ -40,6 +42,7 @@ export function ShareMenu({
   children,
 }: ShareMenuProps) {
   const [mounted, setMounted] = React.useState(false)
+  const [playConfirm] = useSound(confirmation001Sound, { volume: 0.25 })
 
   React.useEffect(() => {
     setMounted(true)
@@ -59,6 +62,7 @@ export function ShareMenu({
   const handleCopy = async () => {
     const success = await copyText(absoluteUrl)
     if (success) {
+      playConfirm()
       toast.success("Link copied to clipboard")
     } else {
       toast.error("Failed to copy link")

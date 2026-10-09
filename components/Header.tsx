@@ -89,11 +89,11 @@ export default function Header() {
 							href="https://github.com/ronisarkar-official/portfolio-nextjs"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 dark:hover:text-accent-foreground"
+							className="hidden sm:inline-flex hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 dark:hover:text-accent-foreground"
 						/>
 						<Separator
 							orientation="vertical"
-							className="h-4"
+							className="h-4 hidden sm:block"
 						/>
 						<ThemeToggle />
 						{/* Mobile menu button */}
