@@ -80,6 +80,9 @@ export const metadata: Metadata = {
 	},
 	alternates: {
 		canonical: BASE_URL,
+		types: {
+			'application/rss+xml': `${BASE_URL}/rss.xml`,
+		},
 	},
 	icons: {
 		icon: '/favicon.ico',
@@ -194,6 +197,15 @@ export default function RootLayout({
 					name="google-site-verification"
 					content="h-sOGh3RDTQVIFlEQzlnvqZ7OOPT0bxEQxFnY9W_L5s"
 				/>
+				<meta
+					name="google-adsense-account"
+					content="ca-pub-3533195027100960"
+				/>
+				<script
+					async
+					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3533195027100960"
+					crossOrigin="anonymous"
+				/>
 
 				{/* Disable automatic detection and formatting of phone numbers */}
 				<meta
@@ -233,6 +245,42 @@ export default function RootLayout({
 					type="text/plain"
 					href="/llms-full.txt"
 					title="Full LLM Context"
+				/>
+
+				{/* Developer identity & profile verification (IndieWeb / rel="me") */}
+				<link
+					rel="me"
+					href="https://github.com/ronisarkar-official"
+				/>
+				<link
+					rel="me"
+					href="https://twitter.com/ronisarkarDev"
+				/>
+				<link
+					rel="me"
+					href="https://linkedin.com/in/ronisarkar"
+				/>
+
+				{/* RSS feed auto-discovery */}
+				<link
+					rel="alternate"
+					type="application/rss+xml"
+					title="Roni Sarkar - Blog RSS Feed"
+					href="/rss.xml"
+				/>
+
+				{/* OpenSearch browser address bar search */}
+				<link
+					rel="search"
+					type="application/opensearchdescription+xml"
+					title="Search Roni Sarkar"
+					href="/opensearch.xml"
+				/>
+
+				{/* Developer credits */}
+				<link
+					rel="author"
+					href="/humans.txt"
 				/>
 
 				{/* Preconnect to external image CDN */}

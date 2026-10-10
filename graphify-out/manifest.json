@@ -60,9 +60,9 @@
     "semantic_hash": "3896ea051b4741fff4bed09d9808efe8"
   },
   "app/layout.tsx": {
-    "mtime": 1791545262.3483448,
-    "seen": 1791545311.182392,
-    "ast_hash": "8f19da7f7c5ba1090b759c93111d4ea1",
+    "mtime": 1791609298.527462,
+    "seen": 1791609331.9515874,
+    "ast_hash": "4bc9caed9e4f8e0ccc06a63380afc5ad",
     "semantic_hash": ""
   },
   "app/llms.txt/route.ts": {
@@ -630,8 +630,8 @@
     "semantic_hash": "b503d989242ea91b3e95b9fad9a57758"
   },
   "global.d.ts": {
-    "mtime": 1776657988.781502,
-    "seen": 1791006871.8912191,
+    "mtime": 1791608252.1334717,
+    "seen": 1791608318.7868428,
     "ast_hash": "45cb4502c31615138dac265a8947d4d1",
     "semantic_hash": "45cb4502c31615138dac265a8947d4d1"
   },
@@ -1119,6 +1119,24 @@
     "mtime": 1791544047.3067875,
     "seen": 1791544689.2091608,
     "ast_hash": "511bd339cd9fb6f20be6192e851e6a73",
+    "semantic_hash": ""
+  },
+  "public/ads.txt": {
+    "mtime": 1791608140.401595,
+    "seen": 1791608318.786919,
+    "ast_hash": "ed36e27ec81645eacf69ab21848278a9",
+    "semantic_hash": ""
+  },
+  "public/.well-known/security.txt": {
+    "mtime": 1791609252.776001,
+    "seen": 1791609331.9518516,
+    "ast_hash": "6926c9ada0aac3630e068eb1dc33e879",
+    "semantic_hash": ""
+  },
+  "public/humans.txt": {
+    "mtime": 1791609259.7464912,
+    "seen": 1791609331.9518569,
+    "ast_hash": "2a265060e1d4a9b91c92abc53767b58f",
     "semantic_hash": ""
   }
 }

@@ -1,0 +1,15 @@
+/* TEAM */
+Developer: Roni Sarkar
+Site: https://roni-sarkar.vercel.app
+Contact: ronisarkar10938@gmail.com
+GitHub: https://github.com/ronisarkar-official
+LinkedIn: https://linkedin.com/in/ronisarkar
+Twitter: https://twitter.com/ronisarkarDev
+Location: India
+
+/* SITE */
+Standards: HTML5, CSS3, TypeScript
+Components: Next.js 16, React 19, Tailwind CSS 4, Motion, Radix UI
+CMS: Sanity
+Software: VS Code
+Hosting: Vercel

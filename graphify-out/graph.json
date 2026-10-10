@@ -3435,7 +3435,7 @@
       "file_type": "code",
       "norm_label": "rootlayout()",
       "source_file": "app/layout.tsx",
-      "source_location": "L105"
+      "source_location": "L108"
     },
     {
       "id": "components_backtotop_backtotop",
@@ -7527,7 +7527,7 @@
       "file_type": "code",
       "norm_label": "viewport",
       "source_file": "app/layout.tsx",
-      "source_location": "L96"
+      "source_location": "L99"
     },
     {
       "id": "components_certifications",
@@ -11241,7 +11241,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/layout.tsx",
-      "source_location": "L251",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -11253,7 +11253,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/layout.tsx",
-      "source_location": "L256",
+      "source_location": "L304",
       "weight": 1.0
     },
     {
@@ -11265,7 +11265,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/layout.tsx",
-      "source_location": "L257",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -11277,7 +11277,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/layout.tsx",
-      "source_location": "L258",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -11289,7 +11289,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/layout.tsx",
-      "source_location": "L259",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -26425,7 +26425,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/layout.tsx",
-      "source_location": "L105",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -26458,7 +26458,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/layout.tsx",
-      "source_location": "L96",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -33452,5 +33452,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b8aaaaf1c294a690f8aa22a939f9022cc72785da"
+  "built_at_commit": "eeeb89831b0b2183167037b85466bf5ba1cd2e6a"
 }
