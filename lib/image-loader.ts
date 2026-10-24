@@ -1,7 +1,7 @@
 import type { ImageLoaderProps } from 'next/image';
 
 /**
- * Serve remote images straight from their own CDN pipelines instead of
+ * Serves remote images straight from their own CDN pipelines instead of
  * proxying every request through `/_next/image`.
  *
  * Why: the LCP image used to wait on the Next image optimizer (fetch +
@@ -10,9 +10,16 @@ import type { ImageLoaderProps } from 'next/image';
  * one-year cache lifetime, so this removes a network hop from the critical
  * path and fixes the "efficient cache lifetimes" insight.
  *
+ * Why it is passed as a `loader` prop on the component rather than set as
+ * `images.loaderFile` in next.config: Turbopack's dev server (Next 16) does
+ * not wire `loaderFile` into next/image, which makes every remote image
+ * throw "missing loader prop" in `next dev`. A per-component loader works
+ * under both bundlers.
+ *
  * - Sanity: `?w=&q=&auto=format` (auto=format negotiates webp per browser).
  * - ImageKit: `?tr=w-,q-,f-auto`.
- * - Local files in `public/` are returned untouched.
+ * - Anything else (local files in `public/`, unknown hosts) is returned
+ *   untouched so the default optimizer keeps handling it.
  */
 export default function imageLoader({
 	src,

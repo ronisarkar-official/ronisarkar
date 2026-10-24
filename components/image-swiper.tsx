@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import Image from 'next/image';
+import imageLoader from '@/lib/image-loader';
 
 interface ImageSwiperProps {
 	images: string;
@@ -234,6 +235,7 @@ export const ImageSwiper: React.FC<ImageSwiperProps> = memo(({
 						src={imageList[originalIndex]}
 						alt={`Profile image ${originalIndex + 1}`}
 						fill
+						loader={imageLoader}
 						sizes={displayIndex === 0 ? '225px' : '140px'}
 						className="object-cover select-none pointer-events-none outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
 						draggable={false}

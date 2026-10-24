@@ -5,10 +5,10 @@ const nextConfig: NextConfig = {
 		ignoreBuildErrors: false,
 	},
 	images: {
-		// Serve remote images from their own CDN (Sanity/ImageKit) instead of
-		// the /_next/image optimizer: fewer hops before the LCP image paints.
-		loader: 'custom',
-		loaderFile: './lib/image-loader.ts',
+		// NOTE: `images.loader: 'custom'` + `loaderFile` is deliberately NOT used:
+		// Next 16's Turbopack dev server does not wire loaderFile into next/image,
+		// so every remote image throws "missing loader prop" in `next dev`.
+		// The CDN loader is passed per-component instead (lib/image-loader.ts).
 		dangerouslyAllowSVG: true,
 		remotePatterns: [
 			{
