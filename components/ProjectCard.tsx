@@ -28,7 +28,7 @@ export function ProjectCard({ project }: Props) {
 							src={image}
 							alt={`${name} project screenshot`}
 							fill
-							sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 500px"
+							sizes="(max-width: 640px) 300px, (max-width: 1024px) 360px, 460px"
 							className="object-top outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10"
 							loading="lazy"
 						/>
