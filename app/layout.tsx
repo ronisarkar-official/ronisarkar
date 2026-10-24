@@ -201,11 +201,6 @@ export default function RootLayout({
 					name="google-adsense-account"
 					content="ca-pub-3533195027100960"
 				/>
-				<script
-					async
-					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3533195027100960"
-					crossOrigin="anonymous"
-				/>
 
 				{/* Disable automatic detection and formatting of phone numbers */}
 				<meta
@@ -283,7 +278,17 @@ export default function RootLayout({
 					href="/humans.txt"
 				/>
 
-				{/* Preconnect to external image CDN */}
+				{/* Preconnect to external image CDNs. cdn.sanity.io serves the
+				    hero/LCP image, so its DNS+TCP+TLS setup must start early. */}
+				<link
+					rel="preconnect"
+					href="https://cdn.sanity.io"
+					crossOrigin="anonymous"
+				/>
+				<link
+					rel="dns-prefetch"
+					href="https://cdn.sanity.io"
+				/>
 				<link
 					rel="preconnect"
 					href="https://ik.imagekit.io"
