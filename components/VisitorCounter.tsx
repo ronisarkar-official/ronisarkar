@@ -55,7 +55,7 @@ export default function VisitorCounter({
 				transition-[background-color,border-color] duration-200
 				${className}`}>
 			<Eye className="w-4 h-4 text-muted-foreground" />
-			<span className="text-sm text-muted-foreground font-mono">
+			<span className="text-sm text-foreground/75 font-mono">
 				{isLoading ?
 					<span className="animate-pulse">Loading...</span>
 				:	<>

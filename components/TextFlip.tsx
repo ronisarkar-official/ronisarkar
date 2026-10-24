@@ -24,9 +24,9 @@ export default function TextFlip({ words, className }: TextFlipProps) {
 			<AnimatePresence mode="wait">
 				<motion.div
 					key={words[index]}
-					initial={{ y: 20, opacity: 0 }}
-					animate={{ y: 0, opacity: 1 }}
-					exit={{ y: -5, opacity: 0 }}
+					initial={{ y: 20 }}
+					animate={{ y: 0 }}
+					exit={{ y: -5 }}
 					transition={{ duration: 0.5, ease: 'easeInOut' }}
 					className="inline-block text-foreground">
 					{words[index]}
