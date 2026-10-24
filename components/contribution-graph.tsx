@@ -1,6 +1,5 @@
 import { getGitHubContributions, Activity } from '@/lib/github-contributions';
 import ContributionGraphClient from './contribution-graph-client';
-import './contribution-graph.css';
 
 interface Props {
 	className?: string;

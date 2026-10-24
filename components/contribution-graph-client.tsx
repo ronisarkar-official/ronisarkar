@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import './contribution-graph.css';
 
 interface Props {
 	children: React.ReactNode;

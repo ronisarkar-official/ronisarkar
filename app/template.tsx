@@ -20,6 +20,11 @@ function getRouteIndex(path: string) {
 // Keep track of the previous route index across remounts
 let previousIndex = -1;
 
+// The first paint must never be animated: fading the page in after hydration
+// hides the LCP element until JS has run, which delays LCP (and FCP) on slow
+// devices. Only client-side route changes get the slide transition.
+let hasPaintedOnce = false;
+
 export default function Template({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
 	const currentIndex = getRouteIndex(pathname);
@@ -36,44 +41,47 @@ export default function Template({ children }: { children: React.ReactNode }) {
 		const el = containerRef.current;
 		if (!el) return;
 
-		// Reset any leftover animation state
-		el.classList.remove('page-enter');
-		el.style.animation = 'none';
+		if (!hasPaintedOnce) {
+			hasPaintedOnce = true;
+			return;
+		}
+
+		if (
+			typeof el.animate !== 'function' ||
+			window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		) {
+			return;
+		}
 
 		// Clip overflow so Suspense fallback→content swaps don't cause a
 		// visible "jump" while the slide animation is still running.
 		el.style.overflow = 'hidden';
 
-		// Promote to its own compositing layer for a smoother animation
-		el.style.willChange = 'transform, opacity';
+		// Web Animations API: composited (transform/opacity only), and it needs
+		// no style-flush read (the old CSS-class toggle read offsetHeight,
+		// which forced a synchronous reflow on every navigation).
+		const animation = el.animate(
+			[
+				{ opacity: 0, transform: `translateX(${direction * 20}px)` },
+				{ opacity: 1, transform: 'translateX(0)' },
+			],
+			{
+				duration: 300,
+				easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+			},
+		);
 
-		// Defer the animation start by one frame so the browser has time
-		// to paint the initial content (including Suspense fallbacks).
-		// Without this, the Suspense swap happens *during* the slide-in,
-		// causing the glitchy layout shift you see on Projects → Blog.
-		const rafId = requestAnimationFrame(() => {
-			// Force a reflow so the browser acknowledges the reset above
-			// before we re-enable the animation.
-			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-			el.offsetHeight;
-			el.style.animation = '';
-			el.classList.add('page-enter');
-		});
-
-		const handleEnd = () => {
-			el.classList.remove('page-enter');
+		const cleanup = () => {
 			el.style.overflow = '';
-			el.style.willChange = '';
 		};
-
-		el.addEventListener('animationend', handleEnd, { once: true });
+		animation.addEventListener('finish', cleanup);
+		animation.addEventListener('cancel', cleanup);
 
 		return () => {
-			cancelAnimationFrame(rafId);
-			el.removeEventListener('animationend', handleEnd);
-			// Clean up in case the component unmounts before animationend fires
+			animation.removeEventListener('finish', cleanup);
+			animation.removeEventListener('cancel', cleanup);
+			animation.cancel();
 			el.style.overflow = '';
-			el.style.willChange = '';
 		};
 	}, [currentIndex, pathname]);
 
@@ -82,14 +90,8 @@ export default function Template({ children }: { children: React.ReactNode }) {
 	return (
 		<div
 			ref={containerRef}
-			className={isAdmin ? 'w-full h-full flex flex-col flex-1 min-h-0' : 'w-full'}
-			style={
-				{
-					'--page-dir': direction,
-				} as React.CSSProperties
-			}>
+			className={isAdmin ? 'w-full h-full flex flex-col flex-1 min-h-0' : 'w-full'}>
 			{children}
 		</div>
 	);
 }
-

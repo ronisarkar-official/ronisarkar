@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
 		ignoreBuildErrors: false,
 	},
 	images: {
+		// Serve remote images from their own CDN (Sanity/ImageKit) instead of
+		// the /_next/image optimizer: fewer hops before the LCP image paints.
+		loader: 'custom',
+		loaderFile: './lib/image-loader.ts',
 		dangerouslyAllowSVG: true,
 		remotePatterns: [
 			{
@@ -37,6 +41,11 @@ const nextConfig: NextConfig = {
 	compress: true,
 	poweredByHeader: false,
 	experimental: {
+		// A/B tested: inlining the 98 KB stylesheet removes one blocking
+		// request but doubles the CSS in the document (style tag + RSC
+		// payload), which pushed FCP and the LCP image download later on a
+		// throttled mobile link. Left off; flip to true to re-test.
+		inlineCss: false,
 		optimizePackageImports: [
 			'lucide-react',
 			'motion/react',
