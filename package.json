@@ -2,6 +2,14 @@
   "name": "portfolio-main-nextjs",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "chrome >= 111",
+    "edge >= 111",
+    "firefox >= 111",
+    "safari >= 16.4",
+    "ios_saf >= 16.4",
+    "not dead"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",

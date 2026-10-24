@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useDeferredMount } from '@/hooks/use-deferred-mount';
 
 const EasterEgg = dynamic(() => import('@/components/EasterEgg'), {
 	ssr: false,
@@ -11,9 +12,14 @@ const CommandMenu = dynamic(() => import('@/components/CommandMenu'), {
 
 /**
  * Wrapper for interactive-only components that don't need SSR.
- * These are lazily loaded on the client to reduce the initial JS bundle.
+ * Their chunks are fetched after the page is idle (or on first interaction)
+ * so they stay out of the initial JS burst.
  */
 export default function ClientShell() {
+	const ready = useDeferredMount();
+
+	if (!ready) return null;
+
 	return (
 		<>
 			<EasterEgg />
