@@ -156,7 +156,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
 
 
-      <article className="mx-auto max-w-4xl px-4 md:pr-20 xl:pr-4 pt-4">
+      {/* On mobile, cancel the layout wrapper's px-8 down to 16px gutters and
+          drop the article's own px-4 so the text uses the full screen width. */}
+      <article className="mx-auto max-w-4xl pt-4 px-0 max-md:-mx-4 md:px-4 md:pr-20 xl:pr-4">
         {/* Back Button */}
         <BackButton />
 
@@ -249,7 +251,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         {/* Content */}
-        <main className="prose prose-zinc dark:prose-invert max-w-none">
+        <main className="prose prose-zinc dark:prose-invert max-w-none break-words">
           <PortableText value={post.body} components={portableTextComponents} />
         </main>
 

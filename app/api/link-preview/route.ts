@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
         {
           headers: {
             'Cache-Control':
-              'public, s-maxage=86400, stale-while-revalidate=604800',
+              'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
           },
         }
       );
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
           {
             headers: {
               'Cache-Control':
-                'public, s-maxage=86400, stale-while-revalidate=604800',
+                'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
             },
           }
         );
@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
           {
             headers: {
               'Cache-Control':
-                'public, s-maxage=86400, stale-while-revalidate=604800',
+                'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
             },
           }
         );
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
     { image: null },
     {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
       },
     }
   );

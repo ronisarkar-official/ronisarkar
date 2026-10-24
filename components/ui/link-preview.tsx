@@ -29,8 +29,63 @@ type LinkPreviewProps = {
   | { isStatic?: false; imageSrc?: never }
 );
 
-const ogCache = new Map<string, string | null>();
-const pendingFetches = new Map<string, Promise<string | null>>();
+const OG_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const OG_CACHE_PREFIX = "link-preview:og:";
+
+type OgCacheEntry = { image: string | null; expiresAt: number };
+
+const ogCache = new Map<string, OgCacheEntry>();
+const pendingFetches = new Map<string, Promise<string | null | undefined>>();
+
+/**
+ * Returns the cached OG image for a URL, `null` when the URL has no OG image,
+ * and `undefined` on a cache miss.
+ */
+function readOgCache(url: string): string | null | undefined {
+  const now = Date.now();
+  const memoryEntry = ogCache.get(url);
+
+  if (memoryEntry) {
+    if (memoryEntry.expiresAt > now) return memoryEntry.image;
+    ogCache.delete(url);
+  }
+
+  if (typeof window === "undefined") return undefined;
+
+  try {
+    const raw = window.localStorage.getItem(OG_CACHE_PREFIX + url);
+    if (!raw) return undefined;
+
+    const entry = JSON.parse(raw) as OgCacheEntry;
+    if (!entry || typeof entry.expiresAt !== "number" || entry.expiresAt <= now) {
+      window.localStorage.removeItem(OG_CACHE_PREFIX + url);
+      return undefined;
+    }
+
+    ogCache.set(url, entry);
+    return entry.image;
+  } catch {
+    // Ignore unavailable storage (private mode, quota, corrupted JSON).
+    return undefined;
+  }
+}
+
+function writeOgCache(url: string, image: string | null) {
+  const entry: OgCacheEntry = {
+    image,
+    expiresAt: Date.now() + OG_CACHE_TTL_MS,
+  };
+
+  ogCache.set(url, entry);
+
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(OG_CACHE_PREFIX + url, JSON.stringify(entry));
+  } catch {
+    // Storage can fail in private mode or when the quota is full.
+  }
+}
 
 export const LinkPreview = ({
   children,
@@ -51,12 +106,11 @@ export const LinkPreview = ({
   const [isMounted, setIsMounted] = React.useState(false);
   const [resolvedSrc, setResolvedSrc] = React.useState<string | null>(() => {
     if (isStatic) return imageSrc;
-    if (ogCache.has(url)) return ogCache.get(url) || null;
-    return null;
+    return readOgCache(url) ?? null;
   });
   const [isFetched, setIsFetched] = React.useState<boolean>(() => {
     if (isStatic) return true;
-    return ogCache.has(url);
+    return readOgCache(url) !== undefined;
   });
   const [hasInteracted, setHasInteracted] = React.useState(false);
   const [isImageLoading, setIsImageLoading] = React.useState(true);
@@ -97,8 +151,8 @@ export const LinkPreview = ({
 
     if (!url || (!hasInteracted && !isOpen)) return;
 
-    if (ogCache.has(url)) {
-      const cached = ogCache.get(url);
+    const cached = readOgCache(url);
+    if (cached !== undefined) {
       setResolvedSrc(cached || fallbackScreenshotSrc);
       setIsFetched(true);
       return;
@@ -112,16 +166,21 @@ export const LinkPreview = ({
         if (!fetchPromise) {
           fetchPromise = fetch(`/api/link-preview?url=${encodeURIComponent(url)}`)
             .then(async (res) => {
-              if (!res.ok) return null;
+              if (!res.ok) return undefined;
               const data = await res.json();
-              return data?.image || null;
+              return (data?.image as string | null | undefined) ?? null;
             })
-            .catch(() => null);
+            .catch(() => undefined);
           pendingFetches.set(url, fetchPromise);
         }
 
         const ogImage = await fetchPromise;
-        ogCache.set(url, ogImage);
+
+        // Only cache real responses. A transient API failure should be retried
+        // on the next hover instead of being remembered for a week.
+        if (ogImage !== undefined) {
+          writeOgCache(url, ogImage);
+        }
 
         if (!isCancelled) {
           setResolvedSrc(ogImage || fallbackScreenshotSrc);
@@ -129,7 +188,6 @@ export const LinkPreview = ({
         }
       } catch {
         if (!isCancelled) {
-          ogCache.set(url, null);
           setResolvedSrc(fallbackScreenshotSrc);
           setIsFetched(true);
         }
@@ -243,7 +301,7 @@ export const LinkPreview = ({
                           onLoad={() => setIsImageLoading(false)}
                           onError={() => {
                             if (displaySrc !== fallbackScreenshotSrc) {
-                              ogCache.set(url, null);
+                              writeOgCache(url, null);
                               setResolvedSrc(fallbackScreenshotSrc);
                             }
                           }}

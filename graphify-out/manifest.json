@@ -474,9 +474,9 @@
     "semantic_hash": ""
   },
   "components/image-swiper.tsx": {
-    "mtime": 1792821261.0696168,
-    "seen": 1792821435.511383,
-    "ast_hash": "11f817c53821829addbbf813cac2e718",
+    "mtime": 1792821633.3636837,
+    "seen": 1792822157.462779,
+    "ast_hash": "cd1467daa87767838e142a0597db648f",
     "semantic_hash": ""
   },
   "components/theme-provider.tsx": {
@@ -708,9 +708,9 @@
     "semantic_hash": "2b82e03ae1a59449eb3538c42f2a8258"
   },
   "next.config.ts": {
-    "mtime": 1792821102.7849596,
-    "seen": 1792821435.511426,
-    "ast_hash": "f3099cce0299d10c5973fdb2d7b401a7",
+    "mtime": 1792821627.4222693,
+    "seen": 1792822157.4628384,
+    "ast_hash": "551a135641e750492228c7fe21a8d72c",
     "semantic_hash": ""
   },
   "package.json": {
@@ -1146,9 +1146,9 @@
     "semantic_hash": ""
   },
   "lib/image-loader.ts": {
-    "mtime": 1792820425.350086,
-    "seen": 1792821435.5114155,
-    "ast_hash": "9b89ac4dbf41eabec68cae2a6e9f9b5f",
+    "mtime": 1792821633.363334,
+    "seen": 1792822157.4628236,
+    "ast_hash": "a488f4a26e4dbf647c6fb1b64f8d4d8a",
     "semantic_hash": ""
   },
   "public/mcet-logo.svg": {
