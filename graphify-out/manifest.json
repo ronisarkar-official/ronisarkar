@@ -36,9 +36,9 @@
     "semantic_hash": "1ecd0dd90641b7ee37db64970b8b75eb"
   },
   "app/blog/[slug]/page.tsx": {
-    "mtime": 1791545212.5002396,
-    "seen": 1791545311.1823838,
-    "ast_hash": "eeb1050d5b5ec27f04f0dde2c2c16442",
+    "mtime": 1792823543.3823762,
+    "seen": 1793884501.788258,
+    "ast_hash": "d6fe65bb0706de394fe8b2d1701f773b",
     "semantic_hash": ""
   },
   "app/blog/page.tsx": {
@@ -204,10 +204,10 @@
     "semantic_hash": ""
   },
   "components/Icon.tsx": {
-    "mtime": 1784008751.482047,
-    "seen": 1791006871.8911445,
-    "ast_hash": "103c84318e45a9f123dffb1789bb4556",
-    "semantic_hash": "103c84318e45a9f123dffb1789bb4556"
+    "mtime": 1793885701.223768,
+    "seen": 1793885739.5557477,
+    "ast_hash": "9701c73b8dd87b1d47fcf88a931aa794",
+    "semantic_hash": ""
   },
   "components/LinkWithIcon.tsx": {
     "mtime": 1776657988.7638538,
@@ -228,14 +228,14 @@
     "semantic_hash": "141305a592ff8b6aa68037018d0fa64a"
   },
   "components/NowPlaying-client.tsx": {
-    "mtime": 1791527217.8873081,
-    "seen": 1791527757.8952084,
+    "mtime": 1793514140.1876607,
+    "seen": 1793884501.7882905,
     "ast_hash": "9f43bb32351b5488f3632b7c24770efc",
     "semantic_hash": ""
   },
   "components/NowPlaying.tsx": {
-    "mtime": 1776657988.7648618,
-    "seen": 1791006871.8911498,
+    "mtime": 1793514140.1876607,
+    "seen": 1793884501.7882912,
     "ast_hash": "b4149988611d5b5169aab58af5b6f164",
     "semantic_hash": "b4149988611d5b5169aab58af5b6f164"
   },
@@ -288,9 +288,9 @@
     "semantic_hash": ""
   },
   "components/TextFlip.tsx": {
-    "mtime": 1792821086.2002168,
-    "seen": 1792821435.5113592,
-    "ast_hash": "0bf713d51412231b1e7399fc0fb4da39",
+    "mtime": 1793885258.414564,
+    "seen": 1793885739.5557706,
+    "ast_hash": "f1672de931b133a271c8d027975f0c05",
     "semantic_hash": ""
   },
   "components/ThemeToggle.tsx": {
@@ -618,10 +618,10 @@
     "semantic_hash": ""
   },
   "data/socials.json": {
-    "mtime": 1785604496.487624,
-    "seen": 1791006871.8912172,
-    "ast_hash": "83f5a2d06204fa3b71fcc10183ebce82",
-    "semantic_hash": "83f5a2d06204fa3b71fcc10183ebce82"
+    "mtime": 1793885701.29399,
+    "seen": 1793885739.5558379,
+    "ast_hash": "16f30f10a50a43879dfb6cb3342770c2",
+    "semantic_hash": ""
   },
   "eslint.config.mjs": {
     "mtime": 1785601327.1275551,
@@ -654,10 +654,10 @@
     "semantic_hash": "85c9b4dc939dad930624464bd630bd0a"
   },
   "lib/github-contributions.ts": {
-    "mtime": 1776657988.781502,
-    "seen": 1791006871.8912232,
-    "ast_hash": "d47f905625ea77664d26eb7ed2248ec9",
-    "semantic_hash": "d47f905625ea77664d26eb7ed2248ec9"
+    "mtime": 1793884561.393632,
+    "seen": 1793885223.289807,
+    "ast_hash": "2b30fa098b5a6190373ced67f75eee71",
+    "semantic_hash": ""
   },
   "lib/nav.ts": {
     "mtime": 1784651626.743801,
@@ -678,10 +678,10 @@
     "semantic_hash": "60a5e3e44b578fde256c45d333fad1c6"
   },
   "lib/spotify.ts": {
-    "mtime": 1784475710.3794808,
-    "seen": 1791006871.8912277,
-    "ast_hash": "3dd79d4535911923e79b7713a0269ea8",
-    "semantic_hash": "3dd79d4535911923e79b7713a0269ea8"
+    "mtime": 1793884561.471099,
+    "seen": 1793885223.2898135,
+    "ast_hash": "7443fe83e4439b82c06a616efabe20ab",
+    "semantic_hash": ""
   },
   "lib/tech-stack.ts": {
     "mtime": 1791540459.2669582,
@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1792820445.233131,
-    "seen": 1792821435.511427,
-    "ast_hash": "7843f4b12a5fe230fb61d0c68694fb1d",
+    "mtime": 1793884123.8020422,
+    "seen": 1793884501.7883766,
+    "ast_hash": "1b658b83c405e6acc5f07f9fe2939c2f",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -1050,15 +1050,15 @@
     "semantic_hash": ""
   },
   "components/ui/link-preview.tsx": {
-    "mtime": 1791544150.5218148,
-    "seen": 1791544689.209204,
-    "ast_hash": "392c2528bf9c26483b0a1305fbac081d",
+    "mtime": 1792824548.9107294,
+    "seen": 1793884501.7883477,
+    "ast_hash": "9dc48e26344ab7f1d879932b78fe6bc3",
     "semantic_hash": ""
   },
   "app/api/link-preview/route.ts": {
-    "mtime": 1791519878.074705,
-    "seen": 1791520021.446211,
-    "ast_hash": "c4dbc410fcc9f524c3dcaa87d3d03496",
+    "mtime": 1792824594.009287,
+    "seen": 1793884501.78825,
+    "ast_hash": "365f201d95efcfc2d442e3fafaa2f3d1",
     "semantic_hash": ""
   },
   "hooks/use-sound.ts": {

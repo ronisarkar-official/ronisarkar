@@ -1,6 +1,11 @@
 {
 	"socials": [
 		{
+			"name": "Twitter",
+			"href": "https://x.com/ronisarkarDev",
+			"icon": "twitter"
+		},
+		{
 			"name": "LinkedIn",
 			"href": "https://linkedin.com/in/ronisarkar",
 			"icon": "linkedin"

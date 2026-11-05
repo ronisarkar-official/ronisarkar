@@ -25,20 +25,30 @@ const RECENTLY_PLAYED_ENDPOINT =
 	'https://api.spotify.com/v1/me/player/recently-played?limit=1';
 
 async function getAccessToken() {
-	const response = await fetch(TOKEN_ENDPOINT, {
-		method: 'POST',
-		headers: {
-			Authorization: `Basic ${basic}`,
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body: new URLSearchParams({
-			grant_type: 'refresh_token',
-			refresh_token: refresh_token!,
-		}),
-		cache: 'no-store',
-	});
+	try {
+		const response = await fetch(TOKEN_ENDPOINT, {
+			method: 'POST',
+			headers: {
+				Authorization: `Basic ${basic}`,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({
+				grant_type: 'refresh_token',
+				refresh_token: refresh_token!,
+			}),
+			cache: 'no-store',
+		});
 
-	return response.json();
+		if (!response.ok) {
+			console.error(`[Spotify] Failed to get access token: ${response.status}`);
+			return {};
+		}
+
+		return await response.json();
+	} catch (error) {
+		console.error('[Spotify] Error fetching access token:', error);
+		return {};
+	}
 }
 
 async function getRecentlyPlayed(
